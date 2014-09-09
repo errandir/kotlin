@@ -60,6 +60,10 @@ import org.jetbrains.jet.compiler.CompilerSettings
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jet.compiler.runner.OutputItemsCollector
 import org.jetbrains.jet.compiler.runner.SimpleOutputItem
+import org.jetbrains.jps.android.AndroidJpsUtil
+import org.jetbrains.jps.android.model.JpsAndroidModuleExtension
+import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
+import org.jetbrains.jps.model.module.JpsModule
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     class object {
@@ -242,9 +246,17 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         JavaBuilderUtil.updateMappings(context, delta, dirtyFilesHolder, chunk, allCompiled, compiledInThisRound)
     }
 
+<<<<<<< HEAD
     private fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, outputsItemsAndTargets: List<Pair<SimpleOutputItem, ModuleBuildTarget>>) {
         for ((outputItem, target) in outputsItemsAndTargets) {
             outputConsumer.registerOutputFile(target, outputItem.getOutputFile(), outputItem.getSourceFiles().map { it.getPath() })
+=======
+            k2JvmArguments.androidRes = getAndroidResPath(representativeTarget.getModule(), context)
+            k2JvmArguments.androidManifest = getAndroidManifest(representativeTarget.getModule())
+
+            runK2JvmCompiler(commonArguments, k2JvmArguments, compilerSettings, messageCollector, environment, moduleFile, outputItemCollector)
+            moduleFile.delete()
+>>>>>>> fix android resource path arguments after rebase
         }
     }
 
@@ -358,6 +370,17 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         moduleFile.delete()
 
         return outputItemCollector
+    }
+
+    private fun getAndroidResPath(module: JpsModule, context: CompileContext): String {
+        val extension = AndroidJpsUtil.getExtension(module)!!
+        val path = AndroidJpsUtil.getResourceDirForCompilationPath(extension)
+        return File(path!!.getAbsolutePath() + "/layout").getAbsolutePath()
+    }
+
+    private fun getAndroidManifest(module: JpsModule): String {
+        val extension = AndroidJpsUtil.getExtension(module)!!
+        return AndroidJpsUtil.getManifestFileForCompilationPath(extension)!!.getAbsolutePath()
     }
 
     public class MessageCollectorAdapter(private val context: CompileContext) : MessageCollector {
