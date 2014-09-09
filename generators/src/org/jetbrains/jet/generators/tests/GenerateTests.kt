@@ -139,6 +139,7 @@ import org.jetbrains.jet.lang.resolve.android.AbstractAndroidXml2KConversionTest
 import org.jetbrains.jet.android.AbstractCrossParserTest
 import org.jetbrains.jet.lang.resolve.android.AbstractAndroidBoxTest
 import org.jetbrains.jet.android.AbstractAndroidCompletionTest
+import org.jetbrains.jet.android.AbstractAndroidGotoTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -665,6 +666,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractAndroidCompletionTest>()) {
             model("android/completion", recursive = false, extension = null)
+        }
+
+        testClass(javaClass<AbstractAndroidGotoTest>()) {
+            model("android/goto", recursive = false, extension = null)
         }
     }
 
