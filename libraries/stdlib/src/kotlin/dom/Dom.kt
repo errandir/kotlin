@@ -257,7 +257,7 @@ public fun Node.clear(): Unit {
     }
 }
 
-/** Returns an [[Iterator]] over the next siblings of this node */
+/** Returns an [Iterator] over the next siblings of this node */
 public fun Node.nextSiblings(): Iterable<Node> = NextSiblings(this)
 
 private class NextSiblings(private var node: Node) : Iterable<Node> {
@@ -274,7 +274,7 @@ private class NextSiblings(private var node: Node) : Iterable<Node> {
     }
 }
 
-/** Returns an [[Iterator]] over the next siblings of this node */
+/** Returns an [Iterator] over the next siblings of this node */
 public fun Node.previousSiblings(): Iterable<Node> = PreviousSiblings(this)
 
 private class PreviousSiblings(private var node: Node) : Iterable<Node> {

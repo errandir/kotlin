@@ -36,7 +36,7 @@ public class StringTemplate(private val values: Array<Any?>) {
  * to encode values as Strings performing any special encoding (such as for HTML)
  * or internationalisation.
  *
- * See [[HtmlFormatter] and [[LocaleFormatter] respectively.
+ * See [HtmlFormatter] and [LocaleFormatter] respectively.
  */
 public fun StringTemplate.toString(formatter: Formatter): String {
     val buffer = StringBuilder()
@@ -67,7 +67,7 @@ public fun StringTemplate.append(out: Appendable, formatter: Formatter): Unit {
 
 /**
  * Converts this string template to internationalised text using the supplied
- * [[LocaleFormatter]]
+ * [LocaleFormatter]
  */
 public fun StringTemplate.toLocale(formatter: LocaleFormatter = LocaleFormatter()): String = toString(formatter)
 
@@ -77,9 +77,9 @@ public fun StringTemplate.toLocale(formatter: LocaleFormatter = LocaleFormatter(
 public fun StringTemplate.toHtml(formatter: HtmlFormatter = HtmlFormatter()): String = toString(formatter)
 
 /**
- * Represents a formatter and encoder of values in a [[StringTemplate]] which understands
- * how to format values for a particular [[Locale]] such as with the [[LocaleFormatter]] or
- * to escape particular characters in different output formats such as [[HtmlFormatter]
+ * Represents a formatter and encoder of values in a [StringTemplate] which understands
+ * how to format values for a particular [Locale] such as with the [LocaleFormatter] or
+ * to escape particular characters in different output formats such as [HtmlFormatter]
  */
 public trait Formatter {
     public fun format(buffer: Appendable, value: Any?): Unit
@@ -117,7 +117,7 @@ public open class ToStringFormatter : Formatter {
 public val defaultLocale: Locale = Locale.getDefault()
 
 /**
- * Formats values using a given [[Locale]] for internationalisation
+ * Formats values using a given [Locale] for internationalisation
  */
 public open class LocaleFormatter(protected val locale: Locale = defaultLocale) : ToStringFormatter() {
 

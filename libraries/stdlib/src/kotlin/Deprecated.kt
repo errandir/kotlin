@@ -24,7 +24,7 @@ deprecated("Use linkedMapOf(...) instead")
 public fun <K, V> linkedMap(vararg values: Pair<K, V>): LinkedHashMap<K, V> = linkedMapOf(*values)
 
 /**
- * A helper method for creating a [[Runnable]] from a function
+ * A helper method for creating a [Runnable] from a function
  */
 deprecated("Use SAM constructor: Runnable(...)")
 public /*inline*/ fun runnable(action: () -> Unit): Runnable {

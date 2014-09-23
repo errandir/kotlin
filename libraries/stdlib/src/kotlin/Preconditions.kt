@@ -5,9 +5,9 @@ import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
 
 /**
- * Throws an [[IllegalArgumentException]] with an optional *message* if the *value* is false.
+ * Throws an [IllegalArgumentException] with an optional *message* if the *value* is false.
  *
- * @includeFunctionBody ../../test/PreconditionsTest.kt failingRequireWithMessage
+ * {code test.collections.PreconditionsTest.failingRequireWithMessage}
  */
 public fun require(value: Boolean, message: Any = "Failed requirement"): Unit {
     if (!value) {
@@ -16,9 +16,9 @@ public fun require(value: Boolean, message: Any = "Failed requirement"): Unit {
 }
 
 /**
- * Throws an [[IllegalArgumentException]] with the *lazyMessage* if the *value* is false.
+ * Throws an [IllegalArgumentException] if the *value* is false and uses *lazyMessage* to calculate message text.
  *
- * @includeFunctionBody ../../test/PreconditionsTest.kt failingRequireWithLazyMessage
+ * {code test.collections.PreconditionsTest.failingRequireWithLazyMessage}
  */
 public inline fun require(value: Boolean, lazyMessage: () -> String): Unit {
     if (!value) {
@@ -28,10 +28,10 @@ public inline fun require(value: Boolean, lazyMessage: () -> String): Unit {
 }
 
 /**
- * Throws an [[IllegalArgumentException]] with the given *message* if the *value* is null otherwise
- * the not null value is returned.
+ * Throws an [IllegalArgumentException] with the given *message* if the *value* is null.
+ * Otherwise the not null value is returned.
  *
- *  @includeFunctionBody ../../test/PreconditionsTest.kt requireNotNull
+ * {code test.collections.PreconditionsTest.requireNotNull}
  */
 public fun <T:Any> requireNotNull(value: T?, message: Any = "Required value was null"): T {
     if (value == null) {
@@ -42,9 +42,9 @@ public fun <T:Any> requireNotNull(value: T?, message: Any = "Required value was 
 }
 
 /**
- * Throws an [[IllegalStateException]] with an optional *message* if the *value* is false.
+ * Throws an [IllegalStateException] with an optional *message* if the *value* is false.
  *
- * @includeFunctionBody ../../test/PreconditionsTest.kt failingCheckWithMessage
+ * {code test.collections.PreconditionsTest.failingCheckWithMessage}
  */
 public fun check(value: Boolean, message: Any = "Check failed"): Unit {
     if (!value) {
@@ -53,9 +53,9 @@ public fun check(value: Boolean, message: Any = "Check failed"): Unit {
 }
 
 /**
- * Throws an [[IllegalStateException]] with the *lazyMessage* if the *value* is false.
+ * Throws an [IllegalStateException] if the *value* is false and uses *lazyMessage* to calculate message text.
  *
- * @includeFunctionBody ../../test/PreconditionsTest.kt failingCheckWithLazyMessage
+ * {code test.collections.PreconditionsTest.failingCheckWithLazyMessage}
  */
 public inline fun check(value: Boolean, lazyMessage: () -> String): Unit {
     if (!value) {
@@ -65,10 +65,10 @@ public inline fun check(value: Boolean, lazyMessage: () -> String): Unit {
 }
 
 /**
- * Throws an [[IllegalStateException]] with the given *message* if the *value* is null otherwise
- * the not null value is returned.
+ * Throws an [IllegalStateException] with the given *message* if the *value* is null.
+ * Otherwise the not null value is returned.
  *
- *  @includeFunctionBody ../../test/PreconditionsTest.kt checkNotNull
+ * {code test.collections.PreconditionsTest.checkNotNull}
  */
 public fun <T:Any> checkNotNull(value: T?, message: String = "Required value was null"): T {
     if (value == null) {
@@ -78,4 +78,7 @@ public fun <T:Any> checkNotNull(value: T?, message: String = "Required value was
     }
 }
 
+/**
+ * Throws an [RuntimeException] with the given *message*.
+ */
 public fun error(message: String): Nothing = throw RuntimeException(message)

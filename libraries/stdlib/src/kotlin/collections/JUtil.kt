@@ -35,7 +35,7 @@ public fun arrayListOf<T>(vararg values: T): ArrayList<T> = values.toCollection(
 public fun hashSetOf<T>(vararg values: T): HashSet<T> = values.toCollection(HashSet(values.size))
 
 /**
- * Returns a new [[HashMap]] populated with the given pairs where the first value in each pair
+ * Returns a new [HashMap] populated with the given pairs where the first value in each pair
  * is the key and the second value is the value
  *
  * @includeFunctionBody ../../test/collections/MapTest.kt createUsingPairs
@@ -47,7 +47,7 @@ public fun <K, V> hashMapOf(vararg values: Pair<K, V>): HashMap<K, V> {
 }
 
 /**
- * Returns a new [[LinkedHashMap]] populated with the given pairs where the first value in each pair
+ * Returns a new [LinkedHashMap] populated with the given pairs where the first value in each pair
  * is the key and the second value is the value. This map preserves insertion order so iterating through
  * the map's entries will be in the same order
  *

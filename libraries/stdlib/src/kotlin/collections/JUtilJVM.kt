@@ -3,17 +3,17 @@ package kotlin
 import java.util.*
 
 /**
- * Returns a new [[SortedSet]] with the initial elements
+ * Returns a new [SortedSet] with the initial elements
  */
 public fun sortedSetOf<T>(vararg values: T): TreeSet<T> = values.toCollection(TreeSet<T>())
 
 /**
- * Returns a new [[SortedSet]] with the given *comparator* and the initial elements
+ * Returns a new [SortedSet] with the given *comparator* and the initial elements
  */
 public fun sortedSetOf<T>(comparator: Comparator<T>, vararg values: T): TreeSet<T> = values.toCollection(TreeSet<T>(comparator))
 
 /**
- * Returns a new [[SortedMap]] populated with the given pairs where the first value in each pair
+ * Returns a new [SortedMap] populated with the given pairs where the first value in each pair
  * is the key and the second value is the value
  *
  * @includeFunctionBody ../../test/collections/MapTest.kt createSortedMap

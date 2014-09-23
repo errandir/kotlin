@@ -14,7 +14,7 @@ class PairTest {
     }
 
     test fun pairMultiAssignment() {
-        val (a, b) = p
+        val (a, b) = Pair(1, "a")
         assertEquals(1, a)
         assertEquals("a", b)
     }

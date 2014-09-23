@@ -156,8 +156,8 @@ public fun CharSequence.slice(range: IntRange): CharSequence {
 }
 
 /**
- * Converts the string into a regular expression [[Pattern]] optionally
- * with the specified flags from [[Pattern]] or'd together
+ * Converts the string into a regular expression [Pattern] optionally
+ * with the specified flags from [Pattern] or'd together
  * so that strings can be split or matched on.
  */
 public fun String.toRegex(flags: Int = 0): java.util.regex.Pattern {
@@ -252,13 +252,13 @@ public inline fun <T : Appendable> String.takeWhileTo(result: T, predicate: (Cha
     return result
 }
 
-/** Copies all characters into a [[Collection] */
+/** Copies all characters into a [Collection] */
 deprecated("Use toList() instead.")
 public fun String.toCollection(): Collection<Char> = toCollection(ArrayList<Char>(this.length()))
 
 /**
  * Replaces every *regexp* occurence in the text with the value retruned by the given function *body* that can handle
- * particular occurance using [[MatchResult]] provided.
+ * particular occurance using [MatchResult] provided.
  */
 public fun String.replaceAll(regexp: String, body: (java.util.regex.MatchResult) -> String): String {
     val sb = StringBuilder(this.length())

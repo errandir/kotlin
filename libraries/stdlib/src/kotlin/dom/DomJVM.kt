@@ -111,10 +111,10 @@ public val Node.innerHTML: String
 public val NodeList.outerHTML: String
     get() = toList().map { it.innerHTML }.join("")
 
-/** Returns an [[Iterator]] of all the next [[Element]] siblings */
+/** Returns an [Iterator] of all the next [Element] siblings */
 public fun Node.nextElements(): List<Element> = nextSiblings().filterIsInstance<Node, Element>(javaClass<Element>())
 
-/** Returns an [[Iterator]] of all the previous [[Element]] siblings */
+/** Returns an [Iterator] of all the previous [Element] siblings */
 public fun Node.previousElements(): List<Element> = previousSiblings().filterIsInstance<Node, Element>(javaClass<Element>())
 
 
@@ -165,14 +165,14 @@ public fun createDocument(builderFactory: DocumentBuilderFactory = defaultDocume
 }
 
 /**
- * Returns the default [[DocumentBuilderFactory]]
+ * Returns the default [DocumentBuilderFactory]
  */
 public fun defaultDocumentBuilderFactory(): DocumentBuilderFactory {
     return DocumentBuilderFactory.newInstance()!!
 }
 
 /**
- * Returns the default [[DocumentBuilder]]
+ * Returns the default [DocumentBuilder]
  */
 public fun defaultDocumentBuilder(builderFactory: DocumentBuilderFactory = defaultDocumentBuilderFactory()): DocumentBuilder {
     return builderFactory.newDocumentBuilder()
@@ -227,7 +227,7 @@ public fun Node.toXmlString(xmlDeclaration: Boolean): String {
     return writer.toString()
 }
 
-/** Converts the node to an XML String and writes it to the given [[Writer]] */
+/** Converts the node to an XML String and writes it to the given [Writer] */
 public fun Node.writeXmlString(writer: Writer, xmlDeclaration: Boolean): Unit {
     val transformer = createTransformer()
     transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, if (xmlDeclaration) "no" else "yes")

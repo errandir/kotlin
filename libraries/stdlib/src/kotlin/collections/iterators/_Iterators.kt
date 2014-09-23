@@ -187,7 +187,7 @@ public inline fun <T> Iterator<T>.forEach(operation: (T) -> Unit) : Unit {
 }
 
 /**
- * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
+ * Groups the elements in the collection into a new [Map] using the supplied *toKey* function to calculate the key to group the elements by
  */
 deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public inline fun <T, K> Iterator<T>.groupBy(toKey: (T) -> K) : Map<K, List<T>> {
@@ -325,7 +325,7 @@ public inline fun <T> Iterator<T>.partition(predicate: (T) -> Boolean) : Pair<Li
 }
 
 /**
- * Creates an [[Iterator]] which iterates over this iterator then the following collection
+ * Creates an [Iterator] which iterates over this iterator then the following collection
  */
 deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.plus(collection: Iterable<T>) : Iterator<T> {
@@ -333,7 +333,7 @@ public fun <T> Iterator<T>.plus(collection: Iterable<T>) : Iterator<T> {
 }
 
 /**
- * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
+ * Creates an [Iterator] which iterates over this iterator then the given element at the end
  */
 deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.plus(element: T) : Iterator<T> {
@@ -341,7 +341,7 @@ public fun <T> Iterator<T>.plus(element: T) : Iterator<T> {
 }
 
 /**
- * Creates an [[Iterator]] which iterates over this iterator then the following iterator
+ * Creates an [Iterator] which iterates over this iterator then the following iterator
  */
 deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.plus(iterator: Iterator<T>) : Iterator<T> {
@@ -368,7 +368,7 @@ public inline fun <T> Iterator<T>.reduce(operation: (T, T) -> T) : T {
 }
 
 /**
- * Returns a original Iterable containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements
+ * Returns a original Iterable containing all the non-*null* elements, throwing an [IllegalArgumentException] if there are any null elements
  */
 deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T:Any> Iterator<T?>.requireNoNulls() : Iterator<T> {
@@ -388,7 +388,7 @@ public fun <T> Iterator<T>.reverse() : List<T> {
 }
 
 /**
- * Copies all elements into a [[List]] and sorts it by value of compare_function(element)
+ * Copies all elements into a [List] and sorts it by value of compare_function(element)
  * E.g. arrayList("two" to 2, "one" to 1).sortBy({it.second}) returns list sorted by second element of pair
  */
 deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
@@ -439,7 +439,7 @@ public fun <T, C: MutableCollection<in T>> Iterator<T>.toCollection(result: C) :
 }
 
 /**
- * Copies all elements into a [[LinkedList]]
+ * Copies all elements into a [LinkedList]
  */
 deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.toLinkedList() : LinkedList<T> {
@@ -447,7 +447,7 @@ public fun <T> Iterator<T>.toLinkedList() : LinkedList<T> {
 }
 
 /**
- * Copies all elements into a [[List]]
+ * Copies all elements into a [List]
  */
 deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.toList() : List<T> {
@@ -455,7 +455,7 @@ public fun <T> Iterator<T>.toList() : List<T> {
 }
 
 /**
- * Copies all elements into a [[ArrayList]]
+ * Copies all elements into a [ArrayList]
  */
 deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.toArrayList() : ArrayList<T> {
@@ -463,7 +463,7 @@ public fun <T> Iterator<T>.toArrayList() : ArrayList<T> {
 }
 
 /**
- * Copies all elements into a [[Set]]
+ * Copies all elements into a [Set]
  */
 deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.toSet() : Set<T> {
@@ -471,7 +471,7 @@ public fun <T> Iterator<T>.toSet() : Set<T> {
 }
 
 /**
- * Copies all elements into a [[HashSet]]
+ * Copies all elements into a [HashSet]
  */
 deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.toHashSet() : HashSet<T> {
@@ -479,7 +479,7 @@ public fun <T> Iterator<T>.toHashSet() : HashSet<T> {
 }
 
 /**
- * Copies all elements into a [[SortedSet]]
+ * Copies all elements into a [SortedSet]
  */
 deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.toSortedSet() : SortedSet<T> {

@@ -12,7 +12,7 @@ public val Map<*, *>.size: Int
 public val Map<*, *>.empty: Boolean
     get() = isEmpty()
 
-/** Returns the [[Map]] if its not null otherwise it returns the empty [[Map]] */
+/** Returns the [Map] if its not null otherwise it returns the empty [Map] */
 public fun <K,V> Map<K,V>?.orEmpty() : Map<K,V>
        = if (this != null) this else stdlib_emptyMap()
 
@@ -70,7 +70,7 @@ public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V
 }
 
 /**
- * Returns an [[Iterator]] over the entries in the [[Map]]
+ * Returns an [Iterator] over the entries in the [Map]
  *
  * @includeFunctionBody ../../test/collections/MapTest.kt iterateWithProperties
  */
@@ -80,7 +80,7 @@ public fun <K, V> Map<K, V>.iterator(): Iterator<Map.Entry<K, V>> {
 }
 
 /**
- * Populates the given *destination* [[Map]] with the value returned by applying the *transform* function on each [[Map.Entry]] in this [[Map]]
+ * Populates the given *destination* [Map] with the value returned by applying the *transform* function on each [Map.Entry] in this [Map]
  */
 public inline fun <K, V, R, C : MutableMap<K, R>> Map<K, V>.mapValuesTo(destination: C, transform: (Map.Entry<K, V>) -> R): C {
     for (e in this) {
@@ -91,7 +91,7 @@ public inline fun <K, V, R, C : MutableMap<K, R>> Map<K, V>.mapValuesTo(destinat
 }
 
 /**
- * Populates the given *destination* [[Map]] with the value returned by applying the *transform* function on each [[Map.Entry]] in this [[Map]]
+ * Populates the given *destination* [Map] with the value returned by applying the *transform* function on each [Map.Entry] in this [Map]
  */
 public inline fun <K, V, R, C : MutableMap<R, V>> Map<K, V>.mapKeysTo(destination: C, transform: (Map.Entry<K, V>) -> R): C {
     for (e in this) {
@@ -102,7 +102,7 @@ public inline fun <K, V, R, C : MutableMap<R, V>> Map<K, V>.mapKeysTo(destinatio
 }
 
 /**
- * Puts all the entries into this [[MutableMap]] with the first value in the pair being the key and the second the value
+ * Puts all the entries into this [MutableMap] with the first value in the pair being the key and the second the value
  */
 public fun <K, V> MutableMap<K, V>.putAll(vararg values: Pair<K, V>): Unit {
     for ((key, value) in values) {
@@ -111,7 +111,7 @@ public fun <K, V> MutableMap<K, V>.putAll(vararg values: Pair<K, V>): Unit {
 }
 
 /**
- * Puts all the entries into this [[MutableMap]] with the first value in the pair being the key and the second the value
+ * Puts all the entries into this [MutableMap] with the first value in the pair being the key and the second the value
  */
 public fun <K, V> MutableMap<K, V>.putAll(values: Iterable<Pair<K,V>>): Unit {
     for ((key, value) in values) {
@@ -120,7 +120,7 @@ public fun <K, V> MutableMap<K, V>.putAll(values: Iterable<Pair<K,V>>): Unit {
 }
 
 /**
- * Returns a new Map containing the results of applying the given *transform* function to each [[Map.Entry]] in this [[Map]]
+ * Returns a new Map containing the results of applying the given *transform* function to each [Map.Entry] in this [Map]
  *
  * @includeFunctionBody ../../test/collections/MapTest.kt mapValues
  */
@@ -129,7 +129,7 @@ public inline fun <K, V, R> Map<K, V>.mapValues(transform: (Map.Entry<K, V>) -> 
 }
 
 /**
- * Returns a new Map containing the results of applying the given *transform* function to each [[Map.Entry]] in this [[Map]]
+ * Returns a new Map containing the results of applying the given *transform* function to each [Map.Entry] in this [Map]
  *
  * @includeFunctionBody ../../test/collections/MapTest.kt mapKeys
  */

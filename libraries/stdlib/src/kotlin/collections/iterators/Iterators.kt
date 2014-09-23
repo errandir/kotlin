@@ -111,7 +111,7 @@ public class TakeWhileIterator<T>(private val iterator: Iterator<T>, private val
     }
 }
 
-/** An [[Iterator]] which invokes a function to calculate the next value in the iteration until the function returns *null* */
+/** An [Iterator] which invokes a function to calculate the next value in the iteration until the function returns *null* */
 deprecated("Use FunctionStream<T> instead")
 public class FunctionIterator<T : Any>(private val nextFunction: () -> T?) : AbstractIterator<T>() {
 
@@ -125,7 +125,7 @@ public class FunctionIterator<T : Any>(private val nextFunction: () -> T?) : Abs
     }
 }
 
-/** An [[Iterator]] which iterates over a number of iterators in sequence */
+/** An [Iterator] which iterates over a number of iterators in sequence */
 deprecated("Use Multistream<T> instead")
 public fun CompositeIterator<T>(vararg iterators: Iterator<T>): CompositeIterator<T> = CompositeIterator(iterators.iterator())
 
@@ -157,7 +157,7 @@ public class CompositeIterator<T>(private val iterators: Iterator<Iterator<T>>) 
     }
 }
 
-/** A singleton [[Iterator]] which invokes once over a value */
+/** A singleton [Iterator] which invokes once over a value */
 deprecated("Use streams for lazy collection operations.")
 public class SingleIterator<T>(private val value: T) : AbstractIterator<T>() {
     private var first = true

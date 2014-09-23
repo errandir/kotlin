@@ -53,16 +53,16 @@ public fun thread(start: Boolean = true, daemon: Boolean = false, contextClassLo
 
 /**
  * Allows you to use the executor as a function to
- * execute the given block on the [[Executor]].
+ * execute the given block on the [Executor].
  */
 public fun Executor.invoke(action: () -> Unit) {
     execute(action)
 }
 
 /**
- * Allows you to use the executor as a function to
- * execute the given block on the [[Executor]].
- */
+* Allows you to use the executor as a function to
+* execute the given block on the [ExecutorService].
+*/
 public fun <T> ExecutorService.invoke(action: () -> T): Future<T> {
     return submit(action)
 }

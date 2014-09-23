@@ -13,19 +13,19 @@ import java.util.Properties
 public fun <K, V> MutableMap<K, V>.set(key: K, value: V): V? = this.put(key, value)
 
 /**
- * Converts this [[Map]] to a [[LinkedHashMap]] so future insertion orders are maintained
+ * Converts this [Map] to a [LinkedHashMap] so future insertion orders are maintained
  */
 public fun <K, V> Map<K, V>.toLinkedMap(): LinkedHashMap<K, V> = LinkedHashMap(this)
 
 /**
- * Converts this [[Map]] to a [[SortedMap]] so iteration order will be in key order
+ * Converts this [Map] to a [SortedMap] so iteration order will be in key order
  *
  * @includeFunctionBody ../../test/collections/MapTest.kt toSortedMap
  */
 public fun <K, V> Map<K, V>.toSortedMap(): SortedMap<K, V> = TreeMap(this)
 
 /**
- * Converts this [[Map]] to a [[SortedMap]] using the given *comparator* so that iteration order will be in the order
+ * Converts this [Map] to a [SortedMap] using the given *comparator* so that iteration order will be in the order
  * defined by the comparator
  *
  * @includeFunctionBody ../../test/collections/MapTest.kt toSortedMapWithComparator
@@ -37,7 +37,7 @@ public fun <K, V> Map<K, V>.toSortedMap(comparator: Comparator<K>): SortedMap<K,
 }
 
 /**
- * Converts this [[Map]] to a [[Properties]] object
+ * Converts this [Map] to a [Properties] object
  *
  * @includeFunctionBody ../../test/collections/MapTest.kt toProperties
  */

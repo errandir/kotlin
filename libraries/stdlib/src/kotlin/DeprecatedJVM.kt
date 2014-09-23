@@ -29,7 +29,7 @@ deprecated("Use sortedMapOf(...) instead")
 public fun <K, V> sortedMap(vararg values: Pair<K, V>): SortedMap<K, V> = sortedMapOf(*values)
 
 /**
- * A helper method for creating a [[Callable]] from a function
+ * A helper method for creating a [Callable] from a function
  */
 deprecated("Use SAM constructor: Callable(...)")
 public /*inline*/ fun <T> callable(action: () -> T): Callable<T> {

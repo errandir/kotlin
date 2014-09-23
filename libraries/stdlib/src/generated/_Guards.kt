@@ -8,7 +8,7 @@ package kotlin
 import java.util.*
 
 /**
- * Returns an original collection containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements
+ * Returns an original collection containing all the non-*null* elements, throwing an [IllegalArgumentException] if there are any null elements
  */
 public fun <T : Any> Array<T?>.requireNoNulls(): Array<T> {
     for (element in this) {
@@ -20,7 +20,7 @@ public fun <T : Any> Array<T?>.requireNoNulls(): Array<T> {
 }
 
 /**
- * Returns an original collection containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements
+ * Returns an original collection containing all the non-*null* elements, throwing an [IllegalArgumentException] if there are any null elements
  */
 public fun <T : Any> Iterable<T?>.requireNoNulls(): Iterable<T> {
     for (element in this) {
@@ -32,7 +32,7 @@ public fun <T : Any> Iterable<T?>.requireNoNulls(): Iterable<T> {
 }
 
 /**
- * Returns an original collection containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements
+ * Returns an original collection containing all the non-*null* elements, throwing an [IllegalArgumentException] if there are any null elements
  */
 public fun <T : Any> List<T?>.requireNoNulls(): List<T> {
     for (element in this) {
@@ -44,7 +44,7 @@ public fun <T : Any> List<T?>.requireNoNulls(): List<T> {
 }
 
 /**
- * Returns an original collection containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements
+ * Returns an original collection containing all the non-*null* elements, throwing an [IllegalArgumentException] if there are any null elements
  */
 public fun <T : Any> Stream<T?>.requireNoNulls(): Stream<T> {
     return FilteringStream(this) {
