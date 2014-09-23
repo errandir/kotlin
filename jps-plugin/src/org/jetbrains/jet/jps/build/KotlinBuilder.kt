@@ -40,7 +40,6 @@ import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
 import java.io.File
-import java.io.IOException
 import java.lang.reflect.Modifier
 import java.util.*
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION
@@ -127,6 +126,16 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             compileToJs(chunk, commonArguments, environment, messageCollector, project)
         }
         else {
+            val representativeTarget = chunk.representativeTarget()
+
+            for (argumentProvider in ServiceLoader.load(javaClass<KotlinJpsCompilerArgumentsProvider>())) {
+                // appending to pluginOptions
+                commonArguments.pluginOptions = array(
+                        *(commonArguments.pluginOptions ?: array<String>()),
+                        *argumentProvider.getExtraArguments(representativeTarget, context).copyToArray()
+                )
+            }
+
             compileToJvm(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder, environment, filesToCompile, messageCollector)
         }
 
@@ -247,17 +256,9 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         JavaBuilderUtil.updateMappings(context, delta, dirtyFilesHolder, chunk, allCompiled, compiledInThisRound)
     }
 
-<<<<<<< HEAD
     private fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, outputsItemsAndTargets: List<Pair<SimpleOutputItem, ModuleBuildTarget>>) {
         for ((outputItem, target) in outputsItemsAndTargets) {
             outputConsumer.registerOutputFile(target, outputItem.getOutputFile(), outputItem.getSourceFiles().map { it.getPath() })
-=======
-            k2JvmArguments.androidRes = getAndroidResPath(representativeTarget.getModule(), context)
-            k2JvmArguments.androidManifest = getAndroidManifest(representativeTarget.getModule())
-
-            runK2JvmCompiler(commonArguments, k2JvmArguments, compilerSettings, messageCollector, environment, moduleFile, outputItemCollector)
-            moduleFile.delete()
->>>>>>> fix android resource path arguments after rebase
         }
     }
 
@@ -371,19 +372,6 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         moduleFile.delete()
 
         return outputItemCollector
-    }
-
-    private fun getAndroidResPath(module: JpsModule, context: CompileContext): String {
-        val extension = AndroidJpsUtil.getExtension(module)
-        if (extension == null) return ""
-        val path = AndroidJpsUtil.getResourceDirForCompilationPath(extension)
-        return File(path!!.getAbsolutePath() + "/layout").getAbsolutePath()
-    }
-
-    private fun getAndroidManifest(module: JpsModule): String {
-        val extension = AndroidJpsUtil.getExtension(module)
-        if (extension == null) return ""
-        return AndroidJpsUtil.getManifestFileForCompilationPath(extension)!!.getAbsolutePath()
     }
 
     public class MessageCollectorAdapter(private val context: CompileContext) : MessageCollector {
