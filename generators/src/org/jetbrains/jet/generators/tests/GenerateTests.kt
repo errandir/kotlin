@@ -133,6 +133,7 @@ import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTestWithJsStdLib
 import org.jetbrains.jet.renderer.AbstractDescriptorRendererTest
 import org.jetbrains.jet.types.AbstractJetTypeBindingTest
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentCompletionHandlerTest
+import org.jetbrains.jet.plugin.decompiler.stubBuilder.AbstractClsStubBuilderTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -595,6 +596,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractDecompiledTextTest>()) {
             model("decompiler/decompiledText", pattern = """^([^\.]+)$""")
+        }
+
+        testClass(javaClass<AbstractClsStubBuilderTest>()) {
+            model("decompiler/stubBuilder", extension = null, recursive = false)
         }
 
         testClass(javaClass<AbstractOptimizeImportsTest>()) {
