@@ -6,21 +6,19 @@ fun mapping(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("withIndices()") {
-        doc { "Returns a list containing pairs of each element of the original collection and their index" }
-        returns("List<Pair<Int, T>>")
+        doc { "Returns a stream of [IndexedValue] for each element of the original collection" }
+        returns("Iterable<IndexedValue<T>>")
         body {
             """
-            var index = 0
-            return mapTo(ArrayList<Pair<Int, T>>(), { index++ to it })
+            return IndexedIterable { iterator() }
             """
         }
 
-        returns(Streams) { "Stream<Pair<Int, T>>" }
+        returns(Streams) { "Stream<IndexedValue<T>>" }
         doc(Streams) { "Returns a stream containing pairs of each element of the original collection and their index" }
         body(Streams) {
             """
-            var index = 0
-            return TransformingStream(this, { index++ to it })
+            return IndexingStream(this)
             """
         }
     }
