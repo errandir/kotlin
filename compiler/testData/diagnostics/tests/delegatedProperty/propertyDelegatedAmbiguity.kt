@@ -6,11 +6,11 @@ class Delegate {
         return 1
     }
 
-    fun propertyDelegated(p: PropertyMetadata) {
+    fun delegatedTo(p: PropertyMetadata) {
         p.equals(p)
     }
 
-    fun propertyDelegated(p: PropertyMetadata, s: String = "") {
+    fun delegatedTo(p: PropertyMetadata, s: String = "") {
         p.equals(s)
     }
 }

@@ -244,7 +244,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         propValue.store(codegen.gen(initializer), codegen.v);
 
         ResolvedCall<FunctionDescriptor> pdResolvedCall =
-                bindingContext.get(BindingContext.DELEGATED_PROPERTY_PD_RESOLVED_CALL, propertyDescriptor);
+                bindingContext.get(BindingContext.DELEGATED_PROPERTY_DELEGATED_TO_RESOLVED_CALL, propertyDescriptor);
         if (pdResolvedCall != null) {
             int index = PropertyCodegen.indexOfDelegatedProperty(property);
             StackValue lastValue = PropertyCodegen.invokeDelegatedPropertyConventionMethod(propertyDescriptor, codegen,

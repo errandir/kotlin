@@ -6,7 +6,7 @@ class Delegate {
         return 1
     }
 
-    fun propertyDelegated<T>(p: PropertyMetadata) {
+    fun delegatedTo<T>(p: PropertyMetadata) {
         p.equals(p)
     }
 }

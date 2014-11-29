@@ -1,7 +1,7 @@
 class Delegate {
     var count = 0
     fun get(t: Any?, p: PropertyMetadata) {}
-    fun propertyDelegated(vararg p: PropertyMetadata) { count++ }
+    fun delegatedTo(vararg p: PropertyMetadata) { count++ }
 }
 
 val delegate = Delegate()

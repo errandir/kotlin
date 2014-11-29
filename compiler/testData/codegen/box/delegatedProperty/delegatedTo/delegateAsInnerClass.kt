@@ -4,7 +4,7 @@ class A {
     inner class Delegate {
         var name = ""
         fun get(t: Any?, p: PropertyMetadata): String = name
-        fun propertyDelegated(p: PropertyMetadata) { name = p.name }
+        fun delegatedTo(p: PropertyMetadata) { name = p.name }
     }
 }
 

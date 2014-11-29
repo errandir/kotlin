@@ -61,7 +61,7 @@ public class DelegatedPropertyResolver {
     @NotNull
     private CallResolver callResolver;
 
-    private static final String PD_METHOD_NAME = "propertyDelegated";
+    private static final String DELEGATED_TO_METHOD_NAME = "delegatedTo";
 
     @Inject
     public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
@@ -135,7 +135,7 @@ public class DelegatedPropertyResolver {
             @NotNull BindingTrace trace,
             @NotNull JetScope scope
     ) {
-        TemporaryBindingTrace traceToResolvePDMethod = TemporaryBindingTrace.create(trace, "Trace to resolve propertyDelegated method in delegated property");
+        TemporaryBindingTrace traceToResolvePDMethod = TemporaryBindingTrace.create(trace, "Trace to resolve " + DELEGATED_TO_METHOD_NAME + " method in delegated property");
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 expressionTypingServices, traceToResolvePDMethod, scope,
                 DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
@@ -143,7 +143,7 @@ public class DelegatedPropertyResolver {
         List<JetExpression> arguments = Lists.newArrayList();
         JetPsiFactory psiFactory = JetPsiFactory(delegateExpression);
         arguments.add(createExpressionForPropertyMetadata(psiFactory, propertyDescriptor));
-        Name functionName = Name.identifier(PD_METHOD_NAME);
+        Name functionName = Name.identifier(DELEGATED_TO_METHOD_NAME);
         JetReferenceExpression fakeCalleeExpression = psiFactory.createSimpleName(functionName.asString());
         ExpressionReceiver receiver = new ExpressionReceiver(delegateExpression, delegateType);
         Call call = CallMaker.makeCallWithExpressions(fakeCalleeExpression, receiver, null, fakeCalleeExpression, arguments, Call.CallType.DEFAULT);
@@ -163,7 +163,7 @@ public class DelegatedPropertyResolver {
             return;
         }
 
-        trace.record(DELEGATED_PROPERTY_PD_RESOLVED_CALL, propertyDescriptor, functionResults.getResultingCall());
+        trace.record(DELEGATED_PROPERTY_DELEGATED_TO_RESOLVED_CALL, propertyDescriptor, functionResults.getResultingCall());
     }
 
     /* Resolve get() or set() methods from delegate */

@@ -121,7 +121,7 @@ public class DebugInfoUtil {
                     PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
                     if (reportIfDynamicCall(property.getDelegate(), propertyDescriptor.getGetter(), DELEGATED_PROPERTY_RESOLVED_CALL)
                         || reportIfDynamicCall(property.getDelegate(), propertyDescriptor.getSetter(), DELEGATED_PROPERTY_RESOLVED_CALL)
-                        || reportIfDynamicCall(property.getDelegate(), propertyDescriptor, DELEGATED_PROPERTY_PD_RESOLVED_CALL)) {
+                        || reportIfDynamicCall(property.getDelegate(), propertyDescriptor, DELEGATED_PROPERTY_DELEGATED_TO_RESOLVED_CALL)) {
                         // for side-effect of the condition only
                     }
                 }

@@ -6,17 +6,17 @@ class Delegate {
         return 1
     }
 
-    fun propertyDelegated() {}
+    fun delegatedTo() {}
 
-    fun propertyDelegated(a: Int) {
+    fun delegatedTo(a: Int) {
         a.equals(a)
     }
 
-    fun propertyDelegated(a: String) {
+    fun delegatedTo(a: String) {
         a.equals(a)
     }
 
-    fun propertyDelegated(p: PropertyMetadata, a: Int) {
+    fun delegatedTo(p: PropertyMetadata, a: Int) {
         p.equals(a)
     }
 }

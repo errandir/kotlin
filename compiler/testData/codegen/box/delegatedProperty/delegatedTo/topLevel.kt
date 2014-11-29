@@ -1,7 +1,7 @@
 class Delegate {
     var name = ""
     fun get(t: Any?, p: PropertyMetadata): String = name
-    fun propertyDelegated(vararg p: PropertyMetadata) { name = p[0].name }
+    fun delegatedTo(p: PropertyMetadata) { name = p.name }
 }
 
 val prop by Delegate()
