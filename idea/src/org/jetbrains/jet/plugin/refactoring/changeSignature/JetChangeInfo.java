@@ -18,18 +18,11 @@ package org.jetbrains.jet.plugin.refactoring.changeSignature;
 
 import com.intellij.lang.Language;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiModifier;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.*;
 import com.intellij.refactoring.changeSignature.*;
 import com.intellij.usageView.UsageInfo;
-import com.intellij.util.Function;
 import com.intellij.util.VisibilityUtil;
-import com.intellij.util.containers.ContainerUtil;
-import kotlin.Function1;
 import kotlin.KotlinPackage;
-import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.AsJavaPackage;
@@ -44,10 +37,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class JetChangeInfo implements ChangeInfo {
     private final JetMethodDescriptor oldDescriptor;
@@ -308,20 +298,13 @@ public class JetChangeInfo implements ChangeInfo {
                                     : PsiModifier.PACKAGE_LOCAL;
 
             JetParameterInfo[] newParameters = getNewParameters();
-            ParameterInfoImpl[] newJavaParameters = ContainerUtil.map2Array(
-                    KotlinPackage.withIndices(newParameters),
-                    new ParameterInfoImpl[newParameters.length],
-                    new Function<Pair<? extends Integer, ? extends JetParameterInfo>, ParameterInfoImpl>() {
-                        @Override
-                        public ParameterInfoImpl fun(Pair<? extends Integer, ? extends JetParameterInfo> pair) {
-                            JetParameterInfo info = pair.getSecond();
-                            PsiType type = primaryMethodUpdated
-                                           ? currentPsiMethod.getParameterList().getParameters()[pair.getFirst()].getType()
-                                           : PsiType.VOID;
-                            return new ParameterInfoImpl(info.getOldIndex(), info.getName(), type, info.getDefaultValueText());
-                        }
-                    }
-            );
+            ParameterInfoImpl[] newJavaParameters = new ParameterInfoImpl[newParameters.length];
+            PsiParameter[] psiParameters = currentPsiMethod.getParameterList().getParameters();
+            for (int index = 0; index < newParameters.length; index++) {
+                JetParameterInfo info = newParameters[index];
+                PsiType type = primaryMethodUpdated ? psiParameters[index].getType() : PsiType.VOID;
+                newJavaParameters[index]= new ParameterInfoImpl(info.getOldIndex(), info.getName(), type, info.getDefaultValueText());
+            }
 
             PsiType returnType = primaryMethodUpdated ? currentPsiMethod.getReturnType() : PsiType.VOID;
 
@@ -348,25 +331,20 @@ public class JetChangeInfo implements ChangeInfo {
 
         FunctionDescriptor functionDescriptor = ResolvePackage.getJavaMethodDescriptor(method);
 
-        final List<ValueParameterDescriptor> parameterDescriptors = functionDescriptor.getValueParameters();
-        List<JetParameterInfo> newParameters = KotlinPackage.map(
-                KotlinPackage.withIndices(javaChangeInfo.getNewParameters()),
-                new Function1<Pair<? extends Integer, ? extends ParameterInfo>, JetParameterInfo>() {
-                    @Override
-                    public JetParameterInfo invoke(Pair<? extends Integer, ? extends ParameterInfo> pair) {
-                        ParameterInfo info = pair.getSecond();
-                        JetParameterInfo jetParameterInfo = new JetParameterInfo(
-                                info.getOldIndex(),
-                                info.getName(),
-                                parameterDescriptors.get(pair.getFirst()).getType(),
-                                null,
-                                null
-                        );
-                        jetParameterInfo.setDefaultValueText(info.getDefaultValue());
-                        return jetParameterInfo;
-                    }
-                }
-        );
+        List<ValueParameterDescriptor> parameterDescriptors = functionDescriptor.getValueParameters();
+        ParameterInfo[] parameterInfos = javaChangeInfo.getNewParameters();
+        List<JetParameterInfo> newParameters  = new ArrayList<JetParameterInfo>(parameterInfos.length);
+        for (int index = 0; index < parameterInfos.length; index++) {
+            ParameterInfo info = parameterInfos[index];
+            JetParameterInfo jetParameterInfo = new JetParameterInfo(
+                    info.getOldIndex(),
+                    info.getName(),
+                    parameterDescriptors.get(index).getType(),
+                    null,
+                    null
+            );
+            newParameters.add(jetParameterInfo);
+        }
 
         return new JetChangeInfo(
                 originalChangeSignatureDescriptor,
