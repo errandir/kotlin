@@ -6,7 +6,7 @@ import java.util.*
 
 /** Returns the [[Map]] if its not null otherwise it returns the empty [[Map]] */
 public fun <K,V> Map<K,V>?.orEmpty() : Map<K,V>
-       = if (this != null) this else stdlib_emptyMap()
+       = if (this != null) this else emptyMap()
 
 public fun <K,V> Map<K,V>.contains(key : K) : Boolean = containsKey(key)
 

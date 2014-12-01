@@ -2,28 +2,58 @@ package kotlin
 
 import java.util.*
 
-private class stdlib_emptyListClass : List<Any> by ArrayList<Any>() {}
-private val stdlib_emptyList : List<Any> = stdlib_emptyListClass()
-private fun stdlib_emptyList<T>() = stdlib_emptyList as List<T>
+private object EmptyList : List<Any> {
+    private val list = ArrayList<Any>()
 
-private class stdlib_emptyMapClass : Map<Any, Any> by HashMap<Any, Any>() {}
-private val stdlib_emptyMap : Map<Any, Any> = stdlib_emptyMapClass()
-private fun stdlib_emptyMap<K,V>() = stdlib_emptyMap as Map<K,V>
+    override fun contains(o: Any?): Boolean = list.contains(o)
+    override fun containsAll(c: Collection<Any?>): Boolean = list.containsAll(c)
+    override fun get(index: Int): Any = list.get(index)
+    override fun indexOf(o: Any?): Int = list.indexOf(o)
+    override fun isEmpty(): Boolean = list.isEmpty()
+    override fun iterator(): Iterator<Any> = list.iterator()
+    override fun lastIndexOf(o: Any?): Int = list.lastIndexOf(o)
+    override fun listIterator(): ListIterator<Any> = list.listIterator()
+    override fun listIterator(index: Int): ListIterator<Any> =list.listIterator(index)
+    override fun size(): Int = list.size()
+    override fun subList(fromIndex: Int, toIndex: Int): List<Any> = list.subList(fromIndex, toIndex)
+    override fun equals(other: Any?): Boolean = list.equals(other)
+    override fun hashCode(): Int = list.hashCode()
+    override fun toString(): String = list.toString()
+}
+
+private object EmptyMap : Map<Any, Any> by HashMap<Any, Any>() {}
+
+private object EmptySet : Set<Any> {
+    private val set = HashSet<Any>()
+
+    override fun contains(o: Any?): Boolean = set.contains(o)
+    override fun containsAll(c: Collection<Any?>): Boolean = set.containsAll(c)
+    override fun isEmpty(): Boolean = set.isEmpty()
+    override fun iterator(): Iterator<Any> = set.iterator()
+    override fun size(): Int = set.size()
+    override fun equals(other: Any?): Boolean = set.equals(other)
+    override fun hashCode(): Int = set.hashCode()
+    override fun toString(): String = set.toString()
+}
+
+public fun emptyList<T>(): List<T> = EmptyList as List<T>
+public fun emptyMap<K, V>(): Map<K, V> = EmptyMap as Map<K, V>
+public fun emptySet<T>(): Set<T> = EmptySet as Set<T>
 
 /** Returns a new read-only list of given elements */
-public fun listOf<T>(vararg values: T): List<T> = if (values.size() == 0) stdlib_emptyList() else arrayListOf(*values)
+public fun listOf<T>(vararg values: T): List<T> = if (values.size() == 0) emptyList() else arrayListOf(*values)
 
 /** Returns an empty list */
-public fun listOf<T>(): List<T> = stdlib_emptyList()
+public fun listOf<T>(): List<T> = emptyList()
 
 /** Returns a new read-only map of given pairs, where the first value is the key, and the second is value */
-public fun mapOf<K, V>(vararg values: Pair<K, V>): Map<K, V> = if (values.size() == 0) stdlib_emptyMap() else linkedMapOf(*values)
+public fun mapOf<K, V>(vararg values: Pair<K, V>): Map<K, V> = if (values.size() == 0) emptyMap() else linkedMapOf(*values)
 
 /** Returns an empty read-only map */
-public fun mapOf<K, V>(): Map<K, V> = stdlib_emptyMap()
+public fun mapOf<K, V>(): Map<K, V> = emptyMap()
 
 /** Returns a new read-only set of given elements */
-public fun setOf<T>(vararg values: T): Set<T> = values.toCollection(LinkedHashSet<T>())
+public fun setOf<T>(vararg values: T): Set<T> = if (values.size() == 0) emptySet() else values.toCollection(LinkedHashSet<T>())
 
 /** Returns a new LinkedList with a variable number of initial elements */
 public fun linkedListOf<T>(vararg values: T): LinkedList<T> = values.toCollection(LinkedList<T>())
@@ -82,9 +112,9 @@ public val Collection<*>.notEmpty: Boolean
     get() = isNotEmpty()
 
 /** Returns the Collection if its not null otherwise it returns the empty list */
-public fun <T> Collection<T>?.orEmpty(): Collection<T> = this ?: stdlib_emptyList()
+public fun <T> Collection<T>?.orEmpty(): Collection<T> = this ?: emptyList()
 
 // List APIs
 
 /** Returns the List if its not null otherwise returns the empty list */
-public fun <T> List<T>?.orEmpty(): List<T> = this ?: stdlib_emptyList()
+public fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
