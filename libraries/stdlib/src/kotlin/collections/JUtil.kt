@@ -40,11 +40,14 @@ public fun emptySet<T>(): Set<T> = EmptySet as Set<T>
 /** Returns a new read-only list of given elements */
 public fun listOf<T>(vararg values: T): List<T> = if (values.size() == 0) emptyList() else arrayListOf(*values)
 
-/** Returns an empty list */
+/** Returns an empty read-only list */
 public fun listOf<T>(): List<T> = emptyList()
 
 /** Returns a new read-only set of given elements */
 public fun setOf<T>(vararg values: T): Set<T> = if (values.size() == 0) emptySet() else values.toCollection(LinkedHashSet<T>())
+
+/** Returns an empty read-only set */
+public fun setOf<T>(): Set<T> = emptySet()
 
 /** Returns a new LinkedList with a variable number of initial elements */
 public fun linkedListOf<T>(vararg values: T): LinkedList<T> = values.toCollection(LinkedList<T>())
@@ -54,7 +57,6 @@ public fun arrayListOf<T>(vararg values: T): ArrayList<T> = values.toCollection(
 
 /** Returns a new HashSet with a variable number of initial elements */
 public fun hashSetOf<T>(vararg values: T): HashSet<T> = values.toCollection(HashSet(values.size()))
-
 
 public val Collection<*>.indices: IntRange
     get() = 0..size() - 1
@@ -71,14 +73,13 @@ public val <T> List<T>.lastIndex: Int
     get() = this.size() - 1
 
 /** Returns true if the collection is not empty */
-public fun <T> Collection<T>.isNotEmpty(): Boolean = !this.isEmpty()
-
-/** Returns true if this collection is not empty */
-public val Collection<*>.notEmpty: Boolean
-    get() = isNotEmpty()
+public fun <T> Collection<T>.isNotEmpty(): Boolean = !isEmpty()
 
 /** Returns the Collection if its not null otherwise it returns the empty list */
 public fun <T> Collection<T>?.orEmpty(): Collection<T> = this ?: emptyList()
 
 /** Returns the List if its not null otherwise returns the empty list */
 public fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
+
+/** Returns the List if its not null otherwise returns the empty list */
+public fun <T> Set<T>?.orEmpty(): Set<T> = this ?: emptySet()
