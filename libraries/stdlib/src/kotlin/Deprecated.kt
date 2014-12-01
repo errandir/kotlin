@@ -124,9 +124,8 @@ public val <T> List<T>.tail: List<T>
         return drop(1)
     }
 
-
 /** Returns true if this collection is empty */
-deprecated("Use none() or isEmpty() function call instead")
+deprecated("Use isEmpty() function call instead")
 public val Collection<*>.empty: Boolean
     get() = isEmpty()
 
@@ -135,3 +134,13 @@ deprecated("Use size() function call instead")
 public val Collection<*>.size: Int
     get() = size()
 
+
+/** Returns the size of the map */
+deprecated("Use size() function call instead")
+public val Map<*, *>.size: Int
+    get() = size()
+
+/** Returns true if this map is empty */
+deprecated("Use isEmpty() function call instead")
+public val Map<*, *>.empty: Boolean
+    get() = isEmpty()
