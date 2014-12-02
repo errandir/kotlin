@@ -42,7 +42,7 @@ public class JetClassFileViewProvider(
     }
 
     //TODO: this is hack obv
-    override fun createFile(project: Project, file: VirtualFile, fileType: FileType): PsiFile? = JetFile(this, true)
+    override fun createFile(project: Project, file: VirtualFile, fileType: FileType): PsiFile? = if (isInternal) null else JetFile(this, true)
 
     override fun createCopy(copy: VirtualFile): SingleRootFileViewProvider {
         return JetClassFileViewProvider(getManager(), copy, false, isInternal)
