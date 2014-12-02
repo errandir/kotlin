@@ -21,7 +21,7 @@ import java.io.File
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
-    if (args.size < 2) {
+    if (args.size() < 2) {
         println(
 """Kotlin built-ins serializer
 

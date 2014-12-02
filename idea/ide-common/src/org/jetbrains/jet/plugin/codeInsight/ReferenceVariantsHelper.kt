@@ -64,7 +64,7 @@ public class ReferenceVariantsHelper(
         if (receiverExpression != null) {
             val isInfixCall = parent is JetBinaryExpression
             fun filterIfInfix(descriptor: DeclarationDescriptor)
-                    = if (isInfixCall) descriptor is SimpleFunctionDescriptor && descriptor.getValueParameters().size == 1 else true
+                    = if (isInfixCall) descriptor is SimpleFunctionDescriptor && descriptor.getValueParameters().size() == 1 else true
 
             // Process as call expression
             val descriptors = HashSet<DeclarationDescriptor>()
