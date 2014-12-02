@@ -26,12 +26,23 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
 
 public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
+    private final boolean includeClassFiles;
+
     @NotNull
     public static GlobalSearchScope kotlinSourcesAndLibraries(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
         if (delegate instanceof JetSourceFilterScope) {
             return delegate;
         }
-        return new JetSourceFilterScope(delegate, true, project);
+        return new JetSourceFilterScope(delegate, true, true, project);
+    }
+
+    @NotNull
+    public static GlobalSearchScope kotlinSourceAndClassFiles(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
+        if (delegate instanceof JetSourceFilterScope) {
+            //TODO:
+            throw new IllegalStateException();
+        }
+        return new JetSourceFilterScope(delegate, false, true, project);
     }
 
     @NotNull
@@ -39,18 +50,24 @@ public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
         if (delegate instanceof JetSourceFilterScope) {
             delegate = ((JetSourceFilterScope) delegate).myBaseScope;
         }
-        return new JetSourceFilterScope(delegate, false, project);
+        return new JetSourceFilterScope(delegate, false, false, project);
     }
 
     private final ProjectFileIndex index;
     private final Project project;
-    private final boolean includeLibraries;
+    private final boolean includeLibrarySourceFiles;
 
-    private JetSourceFilterScope(@NotNull GlobalSearchScope delegate, boolean includeLibraries, @NotNull Project project) {
+    private JetSourceFilterScope(
+            @NotNull GlobalSearchScope delegate,
+            boolean includeLibrarySourceFiles,
+            boolean includeClassFiles,
+            @NotNull Project project
+    ) {
         super(delegate);
         this.index = ProjectRootManager.getInstance(project).getFileIndex();
         this.project = project;
-        this.includeLibraries = includeLibraries;
+        this.includeLibrarySourceFiles = includeLibrarySourceFiles;
+        this.includeClassFiles = includeClassFiles;
     }
 
     @Override
@@ -59,6 +76,11 @@ public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
             return false;
         }
 
-        return ProjectRootsUtil.isInSources(project, file, /* includeTestSources */ false, includeLibraries, /* withLibraryClassesRoots */ true, index);
+        return ProjectRootsUtil.isInSources(
+                project, file,
+                 /* includeTestSources */ false,
+                 includeLibrarySourceFiles,
+                  /* withLibraryClassesRoots */ includeClassFiles,
+                  index);
     }
 }
