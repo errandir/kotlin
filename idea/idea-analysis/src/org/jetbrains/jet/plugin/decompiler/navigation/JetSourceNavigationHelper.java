@@ -203,6 +203,10 @@ public class JetSourceNavigationHelper {
                                             + decompiledContainer.getClass().getSimpleName());
         }
 
+        if (candidates.isEmpty()) {
+            return null;
+        }
+
         if (!forceResolve) {
             candidates = filterByReceiverPresenceAndParametersCount(decompiledDeclaration, candidates);
 
