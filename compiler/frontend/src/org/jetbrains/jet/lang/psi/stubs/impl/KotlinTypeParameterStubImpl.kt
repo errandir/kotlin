@@ -25,7 +25,7 @@ import com.intellij.psi.PsiElement
 
 public class KotlinTypeParameterStubImpl(
         parent: StubElement<out PsiElement>,
-        private val name: StringRef,
+        private val name: StringRef?,
         private val isInVariance: Boolean,
         private val isOutVariance: Boolean
 ) : KotlinStubBaseImpl<JetTypeParameter>(parent, JetStubElementTypes.TYPE_PARAMETER), KotlinTypeParameterStub {
