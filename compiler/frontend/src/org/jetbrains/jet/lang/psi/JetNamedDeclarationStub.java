@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
@@ -40,6 +41,19 @@ abstract class JetNamedDeclarationStub<T extends KotlinStubWithFqName> extends J
 
     public JetNamedDeclarationStub(@NotNull ASTNode node) {
         super(node);
+    }
+
+    @NotNull
+    @Override
+    public PsiElement getNavigationElement() {
+        KotlinDeclarationNavigationPolicy navigationPolicy = ServiceManager.getService(KotlinDeclarationNavigationPolicy.class);
+        if (navigationPolicy != null) {
+            JetElement navigationElement = navigationPolicy.getNavigationElement(this);
+            if (navigationElement != null) {
+                return navigationElement;
+            }
+        }
+        return this;
     }
 
     @Override
