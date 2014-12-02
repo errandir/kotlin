@@ -29,6 +29,8 @@ import org.jetbrains.jet.plugin.decompiler.navigation.NavigateToDecompiledLibrar
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.PsiErrorElement
 import org.jetbrains.jet.lang.psi.JetPsiUtil
+import org.jetbrains.jet.lang.psi.JetFile
+import com.intellij.psi.PsiFile
 
 public abstract class AbstractDecompiledTextTest() : JetLightCodeInsightFixtureTestCase() {
 
@@ -36,16 +38,10 @@ public abstract class AbstractDecompiledTextTest() : JetLightCodeInsightFixtureT
 
     public fun doTest(path: String) {
         val classFile = NavigateToDecompiledLibraryTest.getClassFile("test", getTestName(false), myModule!!)
-        val clsFileForClassFile = PsiManager.getInstance(getProject()!!).findFile(classFile)
-        assertTrue("Expecting java class file, was: " + clsFileForClassFile!!.javaClass, clsFileForClassFile is ClsFileImpl)
-        val decompiledPsiFile = (clsFileForClassFile as ClsFileImpl).getDecompiledPsiFile()
-        assertNotNull(decompiledPsiFile)
-        assertSameLinesWithFile(path.substring(0, path.length - 1) + ".expected.kt", decompiledPsiFile!!.getText())
-        decompiledPsiFile.accept(object : PsiRecursiveElementVisitor() {
-            override fun visitErrorElement(element: PsiErrorElement) {
-                fail("Decompiled file should not contain error elements!\n${JetPsiUtil.getElementTextWithContext(element)}")
-            }
-        })
+        val clsFile = PsiManager.getInstance(getProject()!!).findFile(classFile)
+        assertTrue("Expecting decompiled kotlin file, was: " + clsFile!!.javaClass, clsFile is JetFile)
+        assertSameLinesWithFile(path.substring(0, path.length - 1) + ".expected.kt", clsFile.getText())
+        checkThatFileWasParsedCorrectly(clsFile)
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
@@ -53,5 +49,13 @@ public abstract class AbstractDecompiledTextTest() : JetLightCodeInsightFixtureT
             return JetLightProjectDescriptor.INSTANCE
         }
         return JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH + "/" + getTestName(false), false)
+    }
+
+    private fun checkThatFileWasParsedCorrectly(clsFile: PsiFile) {
+        clsFile.accept(object : PsiRecursiveElementVisitor() {
+            override fun visitErrorElement(element: PsiErrorElement) {
+                fail("Decompiled file should not contain error elements!\n${JetPsiUtil.getElementTextWithContext(element)}")
+            }
+        })
     }
 }
