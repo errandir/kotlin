@@ -119,7 +119,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
         findClassesAndObjects(qualifiedName, scope, answer);
 
         if (PackageClassUtils.isPackageClassFqName(qualifiedName)) {
-            answer.addAll(lightClassGenerationSupport.findPackageClasses(qualifiedName, scope, psiManager));
+            answer.addAll(lightClassGenerationSupport.findPackageClasses(qualifiedName.parent(), scope));
         }
 
         return answer.toArray(new PsiClass[answer.size()]);
@@ -200,7 +200,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
         List<PsiClass> answer = new SmartList<PsiClass>();
         FqName packageFQN = new FqName(psiPackage.getQualifiedName());
 
-        answer.addAll(lightClassGenerationSupport.findPackageClasses(packageFQN, scope, psiManager));
+        answer.addAll(lightClassGenerationSupport.findPackageClasses(packageFQN, scope));
 
         Collection<JetClassOrObject> declarations = lightClassGenerationSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope);
         for (JetClassOrObject declaration : declarations) {

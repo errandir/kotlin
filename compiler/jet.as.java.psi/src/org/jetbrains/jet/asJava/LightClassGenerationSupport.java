@@ -70,10 +70,6 @@ public abstract class LightClassGenerationSupport {
     @Nullable
     public abstract PsiClass getPsiClass(@NotNull JetClassOrObject classOrObject);
 
-    @Nullable
-    public abstract Collection<PsiClass> findPackageClasses(
-            @NotNull FqName packageFqName,
-            @NotNull GlobalSearchScope scope,
-            @NotNull PsiManager psiManager
-    );
+    @NotNull
+    public abstract Collection<PsiClass> findPackageClasses(@NotNull FqName packageFqName, @NotNull GlobalSearchScope scope);
 }

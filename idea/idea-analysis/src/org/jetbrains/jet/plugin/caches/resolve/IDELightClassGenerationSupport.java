@@ -56,10 +56,12 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     private final Project project;
 
     private final Comparator<JetFile> jetFileComparator;
+    private final PsiManager psiManager;
 
     public IDELightClassGenerationSupport(@NotNull Project project) {
         this.project = project;
         this.jetFileComparator = byScopeComparator(GlobalSearchScope.allScope(project));
+        this.psiManager = PsiManager.getInstance(project);
     }
 
 
@@ -195,16 +197,12 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
             return JetSourceNavigationHelper.getOriginalClass(classOrObject);
         }
 
-        return KotlinLightClassForExplicitDeclaration.create(classOrObject.getManager(), classOrObject);
+        return KotlinLightClassForExplicitDeclaration.create(psiManager, classOrObject);
     }
 
-    @Nullable
+    @NotNull
     @Override
-    public Collection<PsiClass> findPackageClasses(
-            @NotNull FqName packageFqName,
-            @NotNull GlobalSearchScope scope,
-            @NotNull PsiManager psiManager
-    ) {
+    public Collection<PsiClass> findPackageClasses(@NotNull FqName packageFqName, @NotNull GlobalSearchScope scope) {
         List<PsiClass> result = new ArrayList<PsiClass>();
         List<KotlinLightPackageClassInfo> packageClassesInfos = findPackageClassesInfos(packageFqName, scope);
         for (KotlinLightPackageClassInfo info : packageClassesInfos) {

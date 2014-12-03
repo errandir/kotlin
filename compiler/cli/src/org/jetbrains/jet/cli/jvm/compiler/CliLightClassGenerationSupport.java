@@ -49,6 +49,7 @@ import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -71,10 +72,12 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
         return ServiceManager.getService(project, CliLightClassGenerationSupport.class);
     }
 
+    private final PsiManager psiManager;
     private BindingContext bindingContext = null;
     private ModuleDescriptor module = null;
 
-    public CliLightClassGenerationSupport() {
+    public CliLightClassGenerationSupport(@NotNull Project project) {
+        this.psiManager = PsiManager.getInstance(project);
     }
 
     @Override
@@ -208,19 +211,17 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     @Nullable
     @Override
     public PsiClass getPsiClass(@NotNull JetClassOrObject classOrObject) {
-        return KotlinLightClassForExplicitDeclaration.create(classOrObject.getManager(), classOrObject);
+        return KotlinLightClassForExplicitDeclaration.create(psiManager, classOrObject);
     }
 
-    @Nullable
+    @NotNull
     @Override
-    public Collection<PsiClass> findPackageClasses(
-            @NotNull FqName packageFqName, @NotNull GlobalSearchScope scope, @NotNull PsiManager psiManager
-    ) {
+    public Collection<PsiClass> findPackageClasses(@NotNull FqName packageFqName, @NotNull GlobalSearchScope scope) {
         Collection<JetFile> filesInPackage = findFilesForPackage(packageFqName, scope);
 
-        if (PackagePartClassUtils.getPackageFilesWithCallables(filesInPackage).isEmpty()) return null;
+        if (PackagePartClassUtils.getPackageFilesWithCallables(filesInPackage).isEmpty()) return Collections.emptyList();
 
-        return Collections.<PsiClass>singleton(KotlinLightClassForPackage.create(psiManager, packageFqName, scope, filesInPackage));
+        return UtilsPackage.<PsiClass>emptyOrSingletonList(KotlinLightClassForPackage.create(psiManager, packageFqName, scope, filesInPackage));
     }
 
     @NotNull
