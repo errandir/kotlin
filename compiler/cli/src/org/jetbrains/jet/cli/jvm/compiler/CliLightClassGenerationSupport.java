@@ -22,6 +22,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiSearchScopeUtil;
 import com.intellij.util.Function;
@@ -31,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
+import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
 import org.jetbrains.jet.asJava.LightClassConstructionContext;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -40,6 +42,7 @@ import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.DescriptorKindFilter;
@@ -179,14 +182,6 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
         return result;
     }
 
-    @NotNull
-    @Override
-    public List<KotlinLightPackageClassInfo> findPackageClassesInfos(
-            @NotNull FqName fqName, @NotNull GlobalSearchScope wholeScope
-    ) {
-        return Collections.singletonList(new KotlinLightPackageClassInfo(findFilesForPackage(fqName, wholeScope), wholeScope));
-    }
-
     @Override
     public boolean packageExists(@NotNull FqName fqName, @NotNull GlobalSearchScope scope) {
         return getModule().getPackage(fqName) != null;
@@ -214,6 +209,18 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     @Override
     public PsiClass getPsiClass(@NotNull JetClassOrObject classOrObject) {
         return KotlinLightClassForExplicitDeclaration.create(classOrObject.getManager(), classOrObject);
+    }
+
+    @Nullable
+    @Override
+    public Collection<PsiClass> findPackageClasses(
+            @NotNull FqName packageFqName, @NotNull GlobalSearchScope scope, @NotNull PsiManager psiManager
+    ) {
+        Collection<JetFile> filesInPackage = findFilesForPackage(packageFqName, scope);
+
+        if (PackagePartClassUtils.getPackageFilesWithCallables(filesInPackage).isEmpty()) return null;
+
+        return Collections.<PsiClass>singleton(KotlinLightClassForPackage.create(psiManager, packageFqName, scope, filesInPackage));
     }
 
     @NotNull
@@ -267,7 +274,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
                         }
                     }
                 }
-                
+
                 return super.get(slice, key);
             }
 
