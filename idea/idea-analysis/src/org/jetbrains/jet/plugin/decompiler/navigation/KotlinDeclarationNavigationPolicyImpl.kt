@@ -22,6 +22,11 @@ import org.jetbrains.jet.lang.psi.JetDeclaration
 
 public class KotlinDeclarationNavigationPolicyImpl : KotlinDeclarationNavigationPolicy {
     override fun getNavigationElement(declaration: JetDeclaration): JetElement? {
-        return JetSourceNavigationHelper.replaceBySourceDeclarationIfPresent(declaration)
+        if (declaration.getContainingJetFile().isCompiled()) {
+            return JetSourceNavigationHelper.replaceBySourceDeclarationIfPresent(declaration)
+        }
+        else {
+            return declaration
+        }
     }
 }
