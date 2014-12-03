@@ -29,15 +29,22 @@ import org.jetbrains.jet.plugin.findUsages.toClassHelper
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import com.intellij.util.Processor
 import org.jetbrains.jet.plugin.JetBundle
+import com.intellij.codeInspection.deadCode.UnusedDeclarationInspection
+import org.jetbrains.jet.asJava.LightClassUtil
 
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
+    private val javaInspection = UnusedDeclarationInspection()
+
     override fun runForWholeFile() = true
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : JetVisitorVoid() {
             override fun visitClass(klass: JetClass) {
                 if (klass.getName() == null) return
+
+                val lightClass = LightClassUtil.getPsiClass(klass)
+                if (javaInspection.isEntryPoint(lightClass)) return
 
                 val usagesSearchHelper = KotlinClassFindUsagesOptions(holder.getProject()).toClassHelper()
                 val request = usagesSearchHelper.newRequest(UsagesSearchTarget(klass, klass.getUseScope()))
