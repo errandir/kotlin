@@ -18,11 +18,17 @@ package org.jetbrains.jet.plugin.caches.resolve;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.libraries.LibraryUtil;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiManager;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.PsiManagerImpl;
+import com.intellij.psi.impl.compiled.ClsFileImpl;
+import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
+import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.stubs.PsiClassHolderFileStub;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.cls.ClsFormatException;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
@@ -34,20 +40,21 @@ import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.plugin.decompiler.navigation.JetSourceNavigationHelper;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelClassByPackageIndex;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil;
 
+import java.io.IOException;
 import java.util.*;
 
-import static org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope.kotlinSources;
+import static org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope.kotlinSourceAndClassFiles;
 
 public class IDELightClassGenerationSupport extends LightClassGenerationSupport {
 
@@ -148,13 +155,13 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public Collection<JetClassOrObject> findClassOrObjectDeclarations(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope) {
-        return JetFullClassNameIndex.getInstance().get(fqName.asString(), project, kotlinSources(searchScope, project));
+        return JetFullClassNameIndex.getInstance().get(fqName.asString(), project, kotlinSourceAndClassFiles(searchScope, project));
     }
 
     @NotNull
     @Override
     public Collection<JetFile> findFilesForPackage(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope) {
-        return PackageIndexUtil.findFilesWithExactPackage(fqName, kotlinSources(searchScope, project), project);
+        return PackageIndexUtil.findFilesWithExactPackage(fqName, kotlinSourceAndClassFiles(searchScope, project), project);
     }
 
     @NotNull
@@ -175,29 +182,63 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     public Collection<JetClassOrObject> findClassOrObjectDeclarationsInPackage(
             @NotNull FqName packageFqName, @NotNull GlobalSearchScope searchScope
     ) {
-        return JetTopLevelClassByPackageIndex.getInstance().get(packageFqName.asString(), project, kotlinSources(searchScope, project));
+        return JetTopLevelClassByPackageIndex.getInstance().get(
+                packageFqName.asString(), project, kotlinSourceAndClassFiles(searchScope, project)
+        );
     }
 
     @Override
     public boolean packageExists(@NotNull FqName fqName, @NotNull GlobalSearchScope scope) {
-        return PackageIndexUtil.packageExists(fqName, kotlinSources(scope, project), project);
+        return PackageIndexUtil.packageExists(fqName, kotlinSourceAndClassFiles(scope, project), project);
     }
 
     @NotNull
     @Override
     public Collection<FqName> getSubPackages(@NotNull FqName fqn, @NotNull GlobalSearchScope scope) {
-        return PackageIndexUtil.getSubPackageFqNames(fqn, kotlinSources(scope, project), project);
+        return PackageIndexUtil.getSubPackageFqNames(fqn, kotlinSourceAndClassFiles(scope, project), project);
     }
 
     @Nullable
     @Override
     public PsiClass getPsiClass(@NotNull JetClassOrObject classOrObject) {
         VirtualFile virtualFile = classOrObject.getContainingFile().getVirtualFile();
-        if (virtualFile != null && LibraryUtil.findLibraryEntry(virtualFile, classOrObject.getProject()) != null) {
-            return JetSourceNavigationHelper.getOriginalClass(classOrObject);
+        if (virtualFile != null && ProjectFileIndex.SERVICE.getInstance(classOrObject.getProject()).isInLibraryClasses(virtualFile)) {
+            JetFile containingJetFile = classOrObject.getContainingJetFile();
+            PsiClass baseClass = getClsClassForKotlinCompiledFiles(containingJetFile);
+            if (baseClass == null) return null;
+
+            FqName packageFqName = containingJetFile.getPackageFqName();
+            FqName classFqName = getClassFqName(classOrObject);
+            List<Name> relativeSegments =
+                    classFqName.pathSegments().subList(packageFqName.pathSegments().size(), classFqName.pathSegments().size());
+            Iterator<Name> iterator = relativeSegments.iterator();
+            Name base = iterator.next();
+            assert baseClass.getName().equals(base.asString());
+            while (iterator.hasNext()) {
+                Name name = iterator.next();
+                PsiClass innerClass = baseClass.findInnerClassByName(name.asString(), false);
+                assert innerClass != null : "Inner class should be found";
+                baseClass = innerClass;
+            }
+            return baseClass;
         }
 
         return KotlinLightClassForExplicitDeclaration.create(psiManager, classOrObject);
+    }
+
+    //TODO: object in class object / class / class object / class stuff
+    private static FqName getClassFqName(@NotNull JetClassOrObject classOrObject) {
+        Name name = classOrObject.getNameAsName();
+        if (name == null) {
+            assert classOrObject instanceof JetObjectDeclaration && ((JetObjectDeclaration) classOrObject).isClassObject();
+            name = Name.identifier(JvmAbi.CLASS_OBJECT_CLASS_NAME);
+        }
+        JetClassOrObject parent = PsiTreeUtil.getParentOfType(classOrObject, JetClassOrObject.class, true);
+        if (parent == null) {
+            assert classOrObject.isTopLevel();
+            return classOrObject.getContainingJetFile().getPackageFqName().child(name);
+        }
+        return getClassFqName(parent).child(name);
     }
 
     @NotNull
@@ -207,7 +248,19 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         List<KotlinLightPackageClassInfo> packageClassesInfos = findPackageClassesInfos(packageFqName, scope);
         for (KotlinLightPackageClassInfo info : packageClassesInfos) {
             Collection<JetFile> files = info.getFiles();
-            if (PackagePartClassUtils.getPackageFilesWithCallables(files).isEmpty()) continue;
+            List<JetFile> filesWithCallables = PackagePartClassUtils.getPackageFilesWithCallables(files);
+            if (filesWithCallables.isEmpty()) continue;
+
+            //TODO: several callable files
+            JetFile fileWithCallables = filesWithCallables.iterator().next();
+            if (fileWithCallables.isCompiled()) {
+                PsiClass clsClass = getClsClassForKotlinCompiledFiles(fileWithCallables);
+                if (clsClass != null) {
+                    result.add(clsClass);
+                }
+                continue;
+            }
+
             KotlinLightClassForPackage lightClass = KotlinLightClassForPackage.create(psiManager, packageFqName, info.getScope(), files);
             if (lightClass == null) continue;
 
@@ -282,5 +335,57 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         public GlobalSearchScope getScope() {
             return scope;
         }
+    }
+
+    @Nullable
+    private static PsiClass getClsClassForKotlinCompiledFiles(@NotNull final JetFile file) {
+        VirtualFile vFile = file.getVirtualFile();
+        if (vFile == null) {
+            return null;
+        }
+
+        final PsiJavaFileStubImpl javaFileStub = (PsiJavaFileStubImpl) createStub(vFile);
+
+        Project project = file.getProject();
+
+        PsiManager manager = PsiManager.getInstance(project);
+        ClsFileImpl fakeFile = new ClsFileImpl((PsiManagerImpl) manager, new ClassFileViewProvider(manager, vFile)) {
+            @NotNull
+            @Override
+            public PsiClassHolderFileStub getStub() {
+                return javaFileStub;
+            }
+
+            //TODO: these override are probably rubbish
+            @Override
+            public PsiElement getMirror() {
+                return file;
+            }
+
+            @Override
+            public PsiFile getDecompiledPsiFile() {
+                return file;
+            }
+        };
+        fakeFile.setPhysical(false);
+        javaFileStub.setPsi(fakeFile);
+        PsiClass[] classes = fakeFile.getClasses();
+        assert classes.length == 1;
+        return classes[0];
+    }
+
+    @NotNull
+    private static PsiJavaFileStub createStub(@NotNull VirtualFile vFile) {
+        try {
+            return ClsFileImpl.buildFileStub(vFile, vFile.contentsToByteArray());
+        }
+        //TODO:
+        catch (ClsFormatException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
