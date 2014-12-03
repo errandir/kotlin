@@ -73,6 +73,18 @@ public class CompiledKotlinInJavaCompletionTestGenerated extends AbstractCompile
         doTest(fileName);
     }
 
+    @TestMetadata("NestedClassMembers.java")
+    public void testNestedClassMembers() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/injava/NestedClassMembers.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NestedClassMembers2.java")
+    public void testNestedClassMembers2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/injava/NestedClassMembers2.java");
+        doTest(fileName);
+    }
+
     @TestMetadata("NestedObjectInstance.java")
     public void testNestedObjectInstance() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/completion/injava/NestedObjectInstance.java");
