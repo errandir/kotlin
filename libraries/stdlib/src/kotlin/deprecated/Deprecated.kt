@@ -175,3 +175,9 @@ public val Map<*, *>.empty: Boolean
 deprecated("Use isNotEmpty() function call instead")
 public val Collection<*>.notEmpty: Boolean
     get() = isNotEmpty()
+
+deprecated("Use index property instead")
+public val <T> IndexedValue<T>.first: Int get() = index
+
+deprecated("Use index property instead")
+public val <T> IndexedValue<T>.second: T get() = value
