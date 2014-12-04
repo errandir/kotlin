@@ -93,7 +93,7 @@ public class NavigateToDecompiledLibraryTest extends AbstractNavigateToLibraryTe
         PsiFile clsFileForClassFile = PsiManager.getInstance(getProject()).findFile(classFile);
         assertNotNull(clsFileForClassFile);
         assertTrue("Expecting kotlin class file, was: " + clsFileForClassFile.getClass(), clsFileForClassFile instanceof JetClsFile);
-        PsiFile decompiledPsiFile = ((ClsFileImpl) clsFileForClassFile).getDecompiledPsiFile();
+        PsiFile decompiledPsiFile = clsFileForClassFile;
         assertNotNull(decompiledPsiFile);
         assertTrue("Expecting decompiled Kotlin file, was: " + decompiledPsiFile.getClass(), decompiledPsiFile instanceof JetFile);
         Map<String, JetDeclaration> map = getRenderedDescriptorToKotlinPsiMap(
