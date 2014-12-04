@@ -36,7 +36,7 @@ public class KotlinClassStubImpl(
         private val isEnumEntry: Boolean,
         private val isLocal: Boolean,
         private val isTopLevel: Boolean
-) : KotlinStubBaseImpl<JetClass>(parent, `type`), KotlinClassStub {
+) : KotlinStubBaseImpl<JetClass>(parent, type), KotlinClassStub {
 
     override fun getFqName(): FqName? {
         val stringRef = StringRef.toString(qualifiedName)
