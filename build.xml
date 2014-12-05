@@ -694,7 +694,6 @@
                 <include name="core/builtins/src"/>
                 <include name="core/runtime.jvm/src"/>
                 <include name="core/reflection/src"/>
-                <include name="core/reflection.jvm/src"/>
             </src>
             <class-path/>
         </new-kotlinc>
@@ -711,11 +710,48 @@
         </new-kotlinc>
     </target>
 
+    <target name="core">
+        <new-kotlinc output="${output}/classes/core">
+            <src>
+                <include name="core/descriptor.loader.java/src"/>
+                <include name="core/descriptors/src"/>
+                <include name="core/descriptors.runtime.impl/src"/>
+                <include name="core/serialization/src"/>
+                <include name="core/serialization.java/src"/>
+                <include name="core/util.runtime/src"/>
+            </src>
+            <class-path>
+                <pathelement path="${output.relative}/classes/builtins"/>
+                <pathelement path="${output.relative}/classes/stdlib"/>
+                <pathelement path="ideaSDK/lib/protobuf-2.5.0.jar"/>
+                <pathelement path="lib/javax.inject.jar"/>
+            </class-path>
+        </new-kotlinc>
+    </target>
+
+    <target name="reflection">
+        <new-kotlinc output="${output}/classes/reflection">
+            <src>
+                <include name="core/reflection.jvm/src"/>
+            </src>
+            <class-path>
+                <pathelement path="${output.relative}/classes/builtins"/>
+                <pathelement path="${output.relative}/classes/stdlib"/>
+                <pathelement path="${output.relative}/classes/core"/>
+                <pathelement path="ideaSDK/lib/protobuf-2.5.0.jar"/>
+            </class-path>
+        </new-kotlinc>
+    </target>
+
     <target name="pack-runtime">
         <jar destfile="${kotlin-home}/lib/kotlin-runtime.jar">
             <fileset dir="${output}/classes/builtins"/>
             <fileset dir="${output}/classes/stdlib"/>
+            <fileset dir="${output}/classes/core"/>
+            <fileset dir="${output}/classes/reflection"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+            <zipfileset src="ideaSDK/lib/protobuf-2.5.0.jar"/>
+            <zipfileset dir="${output}/builtins"/>
 
             <manifest>
                 <attribute name="Built-By" value="${manifest.impl.vendor}"/>
@@ -731,9 +767,15 @@
         <jar destfile="${kotlin-home}/lib/kotlin-runtime-sources.jar">
             <fileset dir="${basedir}/core/builtins/native" includes="**/*"/>
             <fileset dir="${basedir}/core/builtins/src" includes="**/*"/>
+            <fileset dir="${basedir}/core/descriptor.loader.java/src" includes="**/*"/>
+            <fileset dir="${basedir}/core/descriptors/src" includes="**/*"/>
+            <fileset dir="${basedir}/core/descriptors.runtime.impl/src" includes="**/*"/>
             <fileset dir="${basedir}/core/runtime.jvm/src" includes="**/*"/>
             <fileset dir="${basedir}/core/reflection/src" includes="**/*"/>
             <fileset dir="${basedir}/core/reflection.jvm/src" includes="**/*"/>
+            <fileset dir="${basedir}/core/serialization/src" includes="**/*"/>
+            <fileset dir="${basedir}/core/serialization.java/src" includes="**/*"/>
+            <fileset dir="${basedir}/core/util.runtime/src" includes="**/*"/>
             <fileset dir="${basedir}/libraries/stdlib/src" includes="**/*"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
@@ -747,7 +789,7 @@
         </jar>
     </target>
 
-    <target name="runtime" depends="builtins,stdlib,pack-runtime,pack-runtime-sources"/>
+    <target name="runtime" depends="builtins,stdlib,core,reflection,pack-runtime,pack-runtime-sources"/>
 
     <target name="dist"
             depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib"
