@@ -29,7 +29,7 @@ public class KotlinParameterStubImpl(
         private val fqName: StringRef?,
         private val name: StringRef?,
         private val isMutable: Boolean,
-        private val hasValOrValNode: Boolean,
+        private val hasValOrVarNode: Boolean,
         private val hasDefaultValue: Boolean
 ) : KotlinStubBaseImpl<JetParameter>(parent, JetStubElementTypes.VALUE_PARAMETER), KotlinParameterStub {
     override fun getName(): String? {
@@ -42,7 +42,7 @@ public class KotlinParameterStubImpl(
 
     override fun isMutable() = isMutable
 
-    override fun hasValOrValNode() = hasValOrValNode
+    override fun hasValOrVarNode() = hasValOrVarNode
 
     override fun hasDefaultValue() = hasDefaultValue
 }

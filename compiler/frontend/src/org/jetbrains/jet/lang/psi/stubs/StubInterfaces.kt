@@ -82,7 +82,7 @@ public trait KotlinNameReferenceExpressionStub : StubElement<JetNameReferenceExp
 
 public trait KotlinParameterStub : KotlinStubWithFqName<JetParameter> {
     public fun isMutable(): Boolean
-    public fun hasValOrValNode(): Boolean
+    public fun hasValOrVarNode(): Boolean
     public fun hasDefaultValue(): Boolean
 }
 
