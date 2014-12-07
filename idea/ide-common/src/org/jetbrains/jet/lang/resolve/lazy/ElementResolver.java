@@ -64,7 +64,7 @@ public abstract class ElementResolver {
 
     @NotNull
     public BindingContext resolveToElement(@NotNull JetElement jetElement) {
-        return resolveToElement(jetElement, false);
+        return resolveToElement(jetElement, BodyResolveMode.FULL);
     }
 
     @NotNull
@@ -73,7 +73,7 @@ public abstract class ElementResolver {
     }
 
     @NotNull
-    public BindingContext resolveToElement(@NotNull JetElement jetElement, boolean partialBodyResolve) {
+    public BindingContext resolveToElement(@NotNull JetElement jetElement, BodyResolveMode bodyResolveMode) {
         @SuppressWarnings("unchecked") JetElement elementOfAdditionalResolve = (JetElement) JetPsiUtil.getTopmostParentOfTypes(
                 jetElement,
                 JetNamedFunction.class,
@@ -93,11 +93,13 @@ public abstract class ElementResolver {
                 elementOfAdditionalResolve = jetElement;
             }
 
-            if (partialBodyResolve && elementOfAdditionalResolve instanceof JetDeclaration) {
+            if (bodyResolveMode != BodyResolveMode.FULL && elementOfAdditionalResolve instanceof JetDeclaration) {
                 //TODO: do not resolve with filter if whole body resolve cached already
                 PartialBodyResolveFilter filter = new PartialBodyResolveFilter(
                         jetElement,
-                        (JetDeclaration) elementOfAdditionalResolve, probablyNothingCallableNames());
+                        (JetDeclaration) elementOfAdditionalResolve,
+                        probablyNothingCallableNames(),
+                        bodyResolveMode == BodyResolveMode.PARTIAL_FOR_COMPLETION);
                 return elementAdditionalResolve(elementOfAdditionalResolve, filter);
             }
 
