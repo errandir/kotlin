@@ -77,8 +77,8 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     private fun createClassReferenceTypeStub(parent: StubElement<out PsiElement>, type: ProtoBuf.Type) {
         val classId = c.nameResolver.getClassId(type.getConstructor().getId())
         val fqName = classId.asSingleFqName()
-        val isFunctionType = KotlinBuiltIns.getInstance().isExactFunctionType(fqName)
-        val isExtensionFunctionType = KotlinBuiltIns.getInstance().isExactExtensionFunctionType(fqName)
+        val isFunctionType = KotlinBuiltIns.isExactFunctionType(fqName)
+        val isExtensionFunctionType = KotlinBuiltIns.isExactExtensionFunctionType(fqName)
         if (isFunctionType || isExtensionFunctionType) {
             createFunctionTypeStub(parent, type, isExtensionFunctionType)
             return
@@ -231,6 +231,6 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             return false
         }
         val classId = c.nameResolver.getClassId(constructor.getId())
-        return KotlinBuiltIns.getInstance().isAny(classId.asSingleFqName()) && this.getNullable()
+        return KotlinBuiltIns.isAny(classId.asSingleFqName()) && this.getNullable()
     }
 }

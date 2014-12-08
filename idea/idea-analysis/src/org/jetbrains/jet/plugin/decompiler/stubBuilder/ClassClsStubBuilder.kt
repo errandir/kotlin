@@ -61,7 +61,7 @@ private class ClassClsStubBuilder(
     }.let {
         supertypeIds ->
         //empty supertype list if single supertype is Any
-        if (supertypeIds.singleOrNull()?.let { KotlinBuiltIns.getInstance().isAny(it.asSingleFqName()) } ?: false) {
+        if (supertypeIds.singleOrNull()?.let { KotlinBuiltIns.isAny(it.asSingleFqName()) } ?: false) {
             listOf()
         }
         else {
