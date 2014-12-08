@@ -64,6 +64,8 @@ fun createPackageFacadeFileStub(
     return fileStub
 }
 
+fun createIncompatibleAbiVersionFileStub(packageFqName: FqName) = createFileStub(packageFqName)
+
 fun createFileStub(packageFqName: FqName): KotlinFileStubImpl {
     val fileStub = KotlinFileStubImpl(null, packageFqName.asString(), packageFqName.isRoot())
     val packageDirectiveStub = KotlinPlaceHolderStubImpl<JetPackageDirective>(fileStub, JetStubElementTypes.PACKAGE_DIRECTIVE)

@@ -32,7 +32,6 @@ import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.jet.plugin.decompiler.textBuilder.LoggingErrorReporter
 import org.jetbrains.jet.plugin.decompiler.isKotlinInternalCompiledFile
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.kotlin.util.sure
 
 public class KotlinClsStubBuilder : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + 1
@@ -50,13 +49,19 @@ public class KotlinClsStubBuilder : ClsStubBuilder() {
     throws(javaClass<ClsFormatException>())
     fun doBuildFileStub(file: VirtualFile): PsiFileStub<JetFile>? {
         val kotlinBinaryClass = KotlinBinaryClassCache.getKotlinBinaryClass(file)
-        val classId = kotlinBinaryClass.getClassId()
         val header = kotlinBinaryClass.getClassHeader()
+        val classId = kotlinBinaryClass.getClassId()
         val packageFqName = classId.getPackageFqName()
+        if (!header.isCompatibleAbiVersion) {
+            return createIncompatibleAbiVersionFileStub(packageFqName)
+        }
 
         val components = createStubBuilderComponents(file, packageFqName)
-
-        val annotationData = header.annotationData.sure("return something")// TODO_R:
+        val annotationData = header.annotationData
+        if (annotationData == null) {
+            LOG.error("Corrupted kotlin header for file ${file.getName()}")
+            return null
+        }
         return when (header.kind) {
             KotlinClassHeader.Kind.PACKAGE_FACADE -> {
                 val packageData = JavaProtoBufUtil.readPackageDataFrom(annotationData)
