@@ -47,7 +47,9 @@ import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
@@ -335,7 +337,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
 
         v.aconst(thisAsmType);
-        v.invokestatic(REFLECTION_INTERNAL_PACKAGE, factory.getName(), factory.getDescriptor(), false);
+        v.invokestatic(REFLECTION, factory.getName(), factory.getDescriptor(), false);
         v.putstatic(thisAsmType.getInternalName(), fieldName, type);
     }
 
