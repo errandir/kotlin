@@ -33,7 +33,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.junit.Assert
 
 //TODO_R: not clear that code in file and decompiled code differ
-public open class AbstractClsStubBuilderTest : LightCodeInsightFixtureTestCase() {
+public abstract class AbstractClsStubBuilderTest : LightCodeInsightFixtureTestCase() {
     fun doTest(sourcePath: String) {
         val classFile = getClassFileToDecompile(sourcePath)
         val stubTreeFromCls = KotlinClsStubBuilder().buildFileStub(FileContentImpl.createByFile(classFile))!!
