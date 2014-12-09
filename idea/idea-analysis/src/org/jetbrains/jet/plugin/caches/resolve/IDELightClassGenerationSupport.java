@@ -50,6 +50,7 @@ import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelClassByPackageIndex;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil;
+import org.jetbrains.jet.plugin.util.ProjectRootsUtil;
 
 import java.io.IOException;
 import java.util.*;
@@ -202,7 +203,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     @Override
     public PsiClass getPsiClass(@NotNull JetClassOrObject classOrObject) {
         VirtualFile virtualFile = classOrObject.getContainingFile().getVirtualFile();
-        if (virtualFile != null && ProjectFileIndex.SERVICE.getInstance(classOrObject.getProject()).isInLibraryClasses(virtualFile)) {
+        if (virtualFile != null && ProjectRootsUtil.isLibraryClassFile(ProjectFileIndex.SERVICE.getInstance(classOrObject.getProject()), virtualFile)) {
             JetFile containingJetFile = classOrObject.getContainingJetFile();
             PsiClass baseClass = getClsClassForKotlinCompiledFiles(containingJetFile);
             if (baseClass == null) return null;
