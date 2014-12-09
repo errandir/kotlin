@@ -46,6 +46,7 @@ import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.plugin.decompiler.navigation.JetSourceNavigationHelper;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelClassByPackageIndex;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
@@ -226,7 +227,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                 return baseClass;
             }
             else if (ProjectRootsUtil.isLibraryFile(project, virtualFile)) {
-                return null;
+                return JetSourceNavigationHelper.getOriginalClass(classOrObject);
             }
         }
 
