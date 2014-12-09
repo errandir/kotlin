@@ -73,4 +73,9 @@ public object ProjectRootsUtil {
     public fun isLibraryClassFile(fileIndex: ProjectFileIndex, virtualFile: VirtualFile): Boolean {
         return fileIndex.isInLibraryClasses(virtualFile) && virtualFile.getFileType() == JavaClassFileType.INSTANCE
     }
+
+    platformStatic
+    public fun isLibraryFile(fileIndex: ProjectFileIndex, virtualFile: VirtualFile): Boolean {
+        return fileIndex.isInLibraryClasses(virtualFile) || fileIndex.isInLibrarySource(virtualFile)
+    }
 }
