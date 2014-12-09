@@ -71,6 +71,11 @@ public object ProjectRootsUtil {
     }
 
     platformStatic
+    public fun isInProjectOrLibraryContent(element: PsiElement): Boolean {
+        return isInContent(element, includeProjectSource = true, includeLibrarySource = true, includeLibraryClasses = true)
+    }
+
+    platformStatic
     public fun isLibraryClassFile(project: Project, file: VirtualFile): Boolean {
         return isInContent(project, file, includeProjectSource = false, includeLibrarySource = false, includeLibraryClasses = true)
     }
