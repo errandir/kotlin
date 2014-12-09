@@ -203,27 +203,36 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     @Override
     public PsiClass getPsiClass(@NotNull JetClassOrObject classOrObject) {
         VirtualFile virtualFile = classOrObject.getContainingFile().getVirtualFile();
-        if (virtualFile != null && ProjectRootsUtil.isLibraryClassFile(ProjectFileIndex.SERVICE.getInstance(classOrObject.getProject()), virtualFile)) {
-            JetFile containingJetFile = classOrObject.getContainingJetFile();
-            PsiClass baseClass = getClsClassForKotlinCompiledFiles(containingJetFile);
-            if (baseClass == null) return null;
+        //TODO_R: hide fileIndex
+        ProjectFileIndex fileIndex = ProjectFileIndex.SERVICE.getInstance(classOrObject.getProject());
+        if (virtualFile != null) {
+            if (ProjectRootsUtil.isLibraryClassFile(fileIndex, virtualFile)) {
+                //TODO_R: extract
+                JetFile containingJetFile = classOrObject.getContainingJetFile();
+                PsiClass baseClass = getClsClassForKotlinCompiledFiles(containingJetFile);
+                if (baseClass == null) return null;
 
-            FqName packageFqName = containingJetFile.getPackageFqName();
-            FqName classFqName = getClassFqName(classOrObject);
-            List<Name> relativeSegments =
-                    classFqName.pathSegments().subList(packageFqName.pathSegments().size(), classFqName.pathSegments().size());
-            Iterator<Name> iterator = relativeSegments.iterator();
-            Name base = iterator.next();
-            assert baseClass.getName().equals(base.asString());
-            while (iterator.hasNext()) {
-                Name name = iterator.next();
-                PsiClass innerClass = baseClass.findInnerClassByName(name.asString(), false);
-                assert innerClass != null : "Inner class should be found";
-                baseClass = innerClass;
+                FqName packageFqName = containingJetFile.getPackageFqName();
+                FqName classFqName = getClassFqName(classOrObject);
+                List<Name> relativeSegments =
+                        classFqName.pathSegments().subList(packageFqName.pathSegments().size(), classFqName.pathSegments().size());
+                Iterator<Name> iterator = relativeSegments.iterator();
+                Name base = iterator.next();
+                assert baseClass.getName().equals(base.asString());
+                while (iterator.hasNext()) {
+                    Name name = iterator.next();
+                    PsiClass innerClass = baseClass.findInnerClassByName(name.asString(), false);
+                    assert innerClass != null : "Inner class should be found";
+                    baseClass = innerClass;
+                }
+                return baseClass;
             }
-            return baseClass;
+            else if (ProjectRootsUtil.isLibraryFile(fileIndex, virtualFile)) {
+                return null;
+            }
         }
 
+        //TODO_R: really create in all other cases?
         return KotlinLightClassForExplicitDeclaration.create(psiManager, classOrObject);
     }
 
