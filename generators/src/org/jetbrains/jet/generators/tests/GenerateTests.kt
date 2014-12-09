@@ -137,6 +137,7 @@ import org.jetbrains.jet.plugin.coverage.AbstractKotlinCoverageOutputFilesTest
 import org.jetbrains.k2js.test.semantics.AbstractDynamicTest
 import org.jetbrains.jet.lang.resolve.android.AbstractAndroidXml2KConversionTest
 import org.jetbrains.jet.android.AbstractCrossParserTest
+import org.jetbrains.jet.android.AbstractParserResultEqualityTest
 import org.jetbrains.jet.android.AbstractAndroidCompletionTest
 import org.jetbrains.jet.android.AbstractAndroidGotoTest
 import org.jetbrains.jet.jps.build.android.AbstractAndroidJpsTestCase
@@ -703,8 +704,8 @@ fun main(args: Array<String>) {
     }
 
     testGroup("plugins/android-idea-plugin/tests", "plugins/android-idea-plugin/testData") {
-        testClass(javaClass<AbstractCrossParserTest>()) {
-            model("android/crossParser", recursive = false, extension = null)
+        testClass(javaClass<AbstractParserResultEqualityTest>()) {
+            model("android/parserResultEquality", recursive = false, extension = null)
         }
 
         testClass(javaClass<AbstractAndroidCompletionTest>()) {
