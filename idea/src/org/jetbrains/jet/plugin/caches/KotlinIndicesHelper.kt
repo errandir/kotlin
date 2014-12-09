@@ -137,18 +137,14 @@ public class KotlinIndicesHelper(
                                        module: ModuleDescriptor,
                                        bindingContext: BindingContext): Stream<CallableDescriptor> {
         val fqnString = callableFQN.asString()
-        val descriptors = if (index != null) {
-            index.get(fqnString, project, scope)
-                    .filter { it.getReceiverTypeReference() != null }
-                    .map { resolutionFacade.resolveToDescriptor(it) as CallableDescriptor }
-        }
-        else {
+        val extensions = index.get(fqnString, project, scope).filter { it.getReceiverTypeReference() != null }
+        val descriptors = if (extensions.any { it.getContainingJetFile().isCompiled() } ) {
             val importDirective = JetPsiFactory(project).createImportDirective(fqnString)
             analyzeImportReference(importDirective, resolutionScope, BindingTraceContext(), module)
                     .filterIsInstance<CallableDescriptor>()
                     .filter { it.getExtensionReceiverParameter() != null }
         }
-
+        else extensions.map { resolutionFacade.resolveToDescriptor(it) as CallableDescriptor }
         return descriptors.stream()
                 .filter(visibilityFilter)
                 .flatMap { it.substituteExtensionIfCallable(receiverValue, callType, bindingContext, dataFlowInfo).stream() }
