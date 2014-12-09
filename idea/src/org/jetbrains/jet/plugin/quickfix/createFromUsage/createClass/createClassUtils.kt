@@ -100,7 +100,7 @@ private fun PsiElement.canRefactor(): Boolean {
         is PsiPackage ->
             getDirectories().any { it.canRefactor() }
         is JetElement, is PsiDirectory ->
-            isWritable() && ProjectRootsUtil.isInProjectSource(element = this)
+            isWritable() && ProjectRootsUtil.isInProjectSource(this)
         else ->
             false
     }
