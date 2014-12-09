@@ -31,9 +31,9 @@ import com.intellij.ide.highlighter.JavaClassFileType
 public object ProjectRootsUtil {
     platformStatic
     public fun isInSources(project: Project, file: VirtualFile,
-                           includeTestSources: Boolean, includeLibrarySources: Boolean, withLibraryClassesRoots: Boolean,
+                           includeLibrarySources: Boolean, withLibraryClassesRoots: Boolean,
                            fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)): Boolean {
-        if (fileIndex.isInSourceContent(file) || (includeTestSources && fileIndex.isInTestSourceContent(file))) {
+        if (fileIndex.isInSourceContent(file)) {
             return !JetModuleTypeManager.getInstance()!!.isKtFileInGradleProjectInWrongFolder(file, project)
         }
 
@@ -45,7 +45,6 @@ public object ProjectRootsUtil {
     public fun isInSource(
             element: PsiElement,
             includeLibrarySources: Boolean,
-            includeTestSources: Boolean = false,
             withLibraryClassesRoots: Boolean = false
     ): Boolean {
         return runReadAction { (): Boolean ->
@@ -55,7 +54,7 @@ public object ProjectRootsUtil {
                               } ?: return@runReadAction false
 
             val project = element.getProject()
-            return@runReadAction isInSources(project, virtualFile, includeTestSources, includeLibrarySources, withLibraryClassesRoots)
+            return@runReadAction isInSources(project, virtualFile, includeLibrarySources, withLibraryClassesRoots)
         }
     }
 
