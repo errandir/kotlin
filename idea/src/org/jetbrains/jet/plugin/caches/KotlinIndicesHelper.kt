@@ -93,7 +93,7 @@ public class KotlinIndicesHelper(
     private fun MutableCollection<CallableDescriptor>.fqNamesToSuitableExtensions(
             fqNames: Stream<FqName>,
             nameFilter: (String) -> Boolean,
-            index: StringStubIndexExtension<out JetCallableDeclaration>?,
+            index: StringStubIndexExtension<out JetCallableDeclaration>,
             expression: JetSimpleNameExpression,
             bindingContext: BindingContext,
             dataFlowInfo: DataFlowInfo) {
@@ -129,7 +129,7 @@ public class KotlinIndicesHelper(
      * Check that function or property with the given qualified name can be resolved in given scope and called on given receiver
      */
     private fun findSuitableExtensions(callableFQN: FqName,
-                                       index: StringStubIndexExtension<out JetCallableDeclaration>?,
+                                       index: StringStubIndexExtension<out JetCallableDeclaration>,
                                        receiverValue: ReceiverValue,
                                        dataFlowInfo: DataFlowInfo,
                                        callType: CallType,
