@@ -143,7 +143,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
         if (!element.isImportDirectiveExpression() && !JetPsiUtil.isSelectorInQualified(element)) {
             result.addAll(getClassNames(referenceName, file, searchScope))
-            result.addAll(getTopLevelCallables(referenceName, element, indicesHelper))
+            result.addAll(getTopLevelCallables(referenceName, indicesHelper))
         }
 
         result.addAll(getExtensions(referenceName, element, indicesHelper))
@@ -154,8 +154,8 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
                 .map { it.fqName }
     }
 
-    private fun getTopLevelCallables(name: String, context: JetExpression, indicesHelper: KotlinIndicesHelper): Collection<PrioritizedFqName>
-            = indicesHelper.getTopLevelCallablesByName(name, context)
+    private fun getTopLevelCallables(name: String, indicesHelper: KotlinIndicesHelper): Collection<PrioritizedFqName>
+            = indicesHelper.getTopLevelCallablesByName(name)
             .map { PrioritizedFqName(it) }
             .toSet()
 
