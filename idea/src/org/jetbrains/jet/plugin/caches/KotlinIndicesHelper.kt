@@ -46,18 +46,8 @@ public class KotlinIndicesHelper(
         private val moduleDescriptor: ModuleDescriptor,
         private val visibilityFilter: (DeclarationDescriptor) -> Boolean
 ) {
-    public fun getTopLevelCallablesByName(name: String, context: JetExpression /*TODO: to be dropped*/): Collection<CallableDescriptor> {
-        val jetScope = bindingContext[BindingContext.RESOLUTION_SCOPE, context] ?: return listOf()
-
+    public fun getTopLevelCallablesByName(name: String): Collection<CallableDescriptor> {
         val result = HashSet<CallableDescriptor>()
-
-        //TODO: this code is temporary and is to be dropped when compiled top level functions are indexed
-        val identifier = Name.identifier(name)
-        for (fqName in JetFromJavaDescriptorHelper.getTopLevelCallableFqNames(project, scope, false)) {
-            if (fqName.lastSegmentIs(identifier)) {
-                result.addAll(findTopLevelCallables(fqName, context, jetScope))
-            }
-        }
 
         result.addTopLevelNonExtensionCallablesByName(JetFunctionShortNameIndex.getInstance(), name)
         result.addTopLevelNonExtensionCallablesByName(JetPropertyShortNameIndex.getInstance(), name)
@@ -76,7 +66,7 @@ public class KotlinIndicesHelper(
 
     public fun getTopLevelCallables(nameFilter: (String) -> Boolean, context: JetExpression /*TODO: to be dropped*/): Collection<CallableDescriptor> {
         val sourceNames = JetTopLevelFunctionFqnNameIndex.getInstance().getAllKeys(project).stream() + JetTopLevelPropertyFqnNameIndex.getInstance().getAllKeys(project).stream()
-        val allFqNames = sourceNames.map { FqName(it) } + JetFromJavaDescriptorHelper.getTopLevelCallableFqNames(project, scope, false).stream()
+        val allFqNames = sourceNames.map { FqName(it) }
 
         val jetScope = bindingContext[BindingContext.RESOLUTION_SCOPE, context] ?: return listOf()
 
@@ -93,12 +83,10 @@ public class KotlinIndicesHelper(
 
         val sourceFunctionNames = functionsIndex.getAllKeys(project).stream().map { FqName(it) }
         val sourcePropertyNames = propertiesIndex.getAllKeys(project).stream().map { FqName(it) }
-        val compiledFqNames = JetFromJavaDescriptorHelper.getTopLevelCallableFqNames(project, scope, true).stream()
 
         val result = HashSet<CallableDescriptor>()
         result.fqNamesToSuitableExtensions(sourceFunctionNames, nameFilter, functionsIndex, expression, bindingContext, dataFlowInfo)
         result.fqNamesToSuitableExtensions(sourcePropertyNames, nameFilter, propertiesIndex, expression, bindingContext, dataFlowInfo)
-        result.fqNamesToSuitableExtensions(compiledFqNames, nameFilter, null, expression, bindingContext, dataFlowInfo)
         return result
     }
 
