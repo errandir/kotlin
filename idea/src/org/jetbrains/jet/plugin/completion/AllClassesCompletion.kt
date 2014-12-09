@@ -56,7 +56,8 @@ class AllClassesCompletion(val parameters: CompletionParameters,
      */
     private fun addAdaptedJavaCompletion(collector: LookupElementsCollector) {
         AllClassesGetter.processJavaClasses(parameters, prefixMatcher, true, { psiClass ->
-            if (psiClass!! !is KotlinLightClass) {
+            //TODO_R: should filter out all light classes for compiled kotlin binaries
+            if (psiClass!! !is KotlinLightClass && psiClass.isPhysical()) {
                 // Kotlin class should have already been added as kotlin element before
                 val kind = when {
                     psiClass.isAnnotationType() -> ClassKind.ANNOTATION_CLASS
