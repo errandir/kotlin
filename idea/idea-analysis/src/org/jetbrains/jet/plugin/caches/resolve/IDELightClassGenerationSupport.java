@@ -203,10 +203,8 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     @Override
     public PsiClass getPsiClass(@NotNull JetClassOrObject classOrObject) {
         VirtualFile virtualFile = classOrObject.getContainingFile().getVirtualFile();
-        //TODO_R: hide fileIndex
-        ProjectFileIndex fileIndex = ProjectFileIndex.SERVICE.getInstance(classOrObject.getProject());
         if (virtualFile != null) {
-            if (ProjectRootsUtil.isLibraryClassFile(fileIndex, virtualFile)) {
+            if (ProjectRootsUtil.isLibraryClassFile(project, virtualFile)) {
                 //TODO_R: extract
                 JetFile containingJetFile = classOrObject.getContainingJetFile();
                 PsiClass baseClass = getClsClassForKotlinCompiledFiles(containingJetFile);
@@ -227,7 +225,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                 }
                 return baseClass;
             }
-            else if (ProjectRootsUtil.isLibraryFile(fileIndex, virtualFile)) {
+            else if (ProjectRootsUtil.isLibraryFile(project, virtualFile)) {
                 return null;
             }
         }
