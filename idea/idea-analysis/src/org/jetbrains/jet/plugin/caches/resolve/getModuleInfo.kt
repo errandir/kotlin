@@ -26,6 +26,7 @@ import org.jetbrains.jet.asJava.FakeLightClassForFileOfPackage
 import org.jetbrains.jet.asJava.KotlinLightClassForPackage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.jet.plugin.util.ProjectRootsUtil
 
 fun PsiElement.getModuleInfo(): IdeaModuleInfo {
     fun logAndReturnDefault(message: String): IdeaModuleInfo {
@@ -83,10 +84,10 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
         when (orderEntry) {
             is LibraryOrderEntry -> {
                 val library = orderEntry.getLibrary() ?: continue @entries
-                if (projectFileIndex.isInLibraryClasses(virtualFile) && !isDecompiledFile) {
+                if (ProjectRootsUtil.isLibraryClassFile(project, virtualFile) && !isDecompiledFile) {
                     return LibraryInfo(project, library)
                 }
-                else if (projectFileIndex.isInLibrarySource(virtualFile) || isDecompiledFile) {
+                else if (ProjectRootsUtil.isLibraryFile(project, virtualFile) || isDecompiledFile) {
                     return LibrarySourceInfo(project, library)
                 }
             }
