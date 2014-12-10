@@ -80,7 +80,7 @@ PsiJetFileStubImpl[package=test]
         MODIFIER_LIST:[internal final]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
-            REFERENCE_EXPRESSION:[referencedName=T1]
+            REFERENCE_EXPRESSION:[referencedName=T2]
       PROPERTY:[fqName=test.TypeParams.withOwnBoundedParam, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=true, isProbablyNothingType=false, isTopLevel=false, isVar=false, name=withOwnBoundedParam]
         MODIFIER_LIST:[internal final]
         TYPE_PARAMETER_LIST:
@@ -100,7 +100,7 @@ PsiJetFileStubImpl[package=test]
           TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=G1]
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
-                REFERENCE_EXPRESSION:[referencedName=T2]
+                REFERENCE_EXPRESSION:[referencedName=T4]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             REFERENCE_EXPRESSION:[referencedName=G1]
@@ -153,8 +153,17 @@ PsiJetFileStubImpl[package=test]
                 REFERENCE_EXPRESSION:[referencedName=T1]
           VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=p2]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                REFERENCE_EXPRESSION:[referencedName=T2]
+              FUNCTION_TYPE:
+                VALUE_PARAMETER_LIST:
+                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=null]
+                    TYPE_REFERENCE:
+                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                        REFERENCE_EXPRESSION:[referencedName=T2]
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=kotlin]
+                    REFERENCE_EXPRESSION:[referencedName=Unit]
           VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=p3]
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -225,12 +234,12 @@ PsiJetFileStubImpl[package=test]
                     TYPE_REFERENCE:
                       NULLABLE_TYPE:
                         USER_TYPE:[isAbsoluteInRootPackage=false]
-                          REFERENCE_EXPRESSION:[referencedName=T2]
+                          REFERENCE_EXPRESSION:[referencedName=T4]
                   TYPE_PROJECTION:[projectionKind=NONE]
                     TYPE_REFERENCE:
                       NULLABLE_TYPE:
                         USER_TYPE:[isAbsoluteInRootPackage=false]
-                          REFERENCE_EXPRESSION:[referencedName=T3]
+                          REFERENCE_EXPRESSION:[referencedName=T5]
           VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=p3]
             TYPE_REFERENCE:
               FUNCTION_TYPE:
@@ -242,10 +251,6 @@ PsiJetFileStubImpl[package=test]
                   VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=null]
                     TYPE_REFERENCE:
                       USER_TYPE:[isAbsoluteInRootPackage=false]
-                        REFERENCE_EXPRESSION:[referencedName=T1]
-                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=null]
-                    TYPE_REFERENCE:
-                      USER_TYPE:[isAbsoluteInRootPackage=false]
                         REFERENCE_EXPRESSION:[referencedName=T2]
                   VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=null]
                     TYPE_REFERENCE:
@@ -253,7 +258,7 @@ PsiJetFileStubImpl[package=test]
                         REFERENCE_EXPRESSION:[referencedName=T3]
                 TYPE_REFERENCE:
                   USER_TYPE:[isAbsoluteInRootPackage=false]
-                    REFERENCE_EXPRESSION:[referencedName=T5]
+                    REFERENCE_EXPRESSION:[referencedName=T1]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -284,8 +289,17 @@ PsiJetFileStubImpl[package=test]
                 REFERENCE_EXPRESSION:[referencedName=T1]
           VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=p5]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                REFERENCE_EXPRESSION:[referencedName=T2]
+              FUNCTION_TYPE:
+                VALUE_PARAMETER_LIST:
+                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=null]
+                    TYPE_REFERENCE:
+                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                        REFERENCE_EXPRESSION:[referencedName=T2]
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=kotlin]
+                    REFERENCE_EXPRESSION:[referencedName=Unit]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -322,8 +336,17 @@ PsiJetFileStubImpl[package=test]
                 REFERENCE_EXPRESSION:[referencedName=T1]
           VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=p5]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                REFERENCE_EXPRESSION:[referencedName=T2]
+              FUNCTION_TYPE:
+                VALUE_PARAMETER_LIST:
+                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=null]
+                    TYPE_REFERENCE:
+                      USER_TYPE:[isAbsoluteInRootPackage=false]
+                        REFERENCE_EXPRESSION:[referencedName=T2]
+                TYPE_REFERENCE:
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=kotlin]
+                    REFERENCE_EXPRESSION:[referencedName=Unit]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             USER_TYPE:[isAbsoluteInRootPackage=false]
