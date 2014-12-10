@@ -18,12 +18,18 @@ package org.jetbrains.k2js.facade
 
 import kotlin.platform.platformStatic
 
-public class Status<out T> private (val result: T, private val type: Status.Type) {
+public class Status<out T> private (private val _result: T, private val type: Status.Type) {
     class object {
         platformStatic fun fail<T>(): Status<T> = Status<T>(null, Type.Fail)
 
         platformStatic fun success<T>(value: T): Status<T> = Status(value, Type.Success)
     }
+
+    val result: T
+        get() {
+            assert(type == Type.Success) { "Getting result from fail status is illegal" }
+            return _result
+        }
 
     fun isFail(): Boolean = type == Type.Fail
 
