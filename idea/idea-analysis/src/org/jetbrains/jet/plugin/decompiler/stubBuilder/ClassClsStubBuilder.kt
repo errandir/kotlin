@@ -115,7 +115,10 @@ private class ClassClsStubBuilder(
         val isClassObject = classKind == ProtoBuf.Class.Kind.CLASS_OBJECT
         val fqName = if (!isClassObject) outerContext.memberFqNameProvider.getMemberFqName(classId.getRelativeClassName().shortName()) else null
         val shortName = fqName?.shortName()?.ref()
-        val superTypeRefs = supertypeIds.map { it.getRelativeClassName().shortName().ref() }.copyToArray()
+        val superTypeRefs = supertypeIds.filter {
+            //TODO: filtering function types should go away
+            !KotlinBuiltIns.isExactFunctionType(it.asSingleFqName()) && !KotlinBuiltIns.isExactExtensionFunctionType(it.asSingleFqName())
+        }.map { it.getRelativeClassName().shortName().ref() }.copyToArray()
         return when (classKind) {
             ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.CLASS_OBJECT -> {
                 KotlinObjectStubImpl(
