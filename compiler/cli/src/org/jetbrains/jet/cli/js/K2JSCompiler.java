@@ -83,7 +83,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     protected ExitCode doExecute(
             @NotNull K2JSCompilerArguments arguments,
             @NotNull Services services,
-            @NotNull final MessageCollector messageCollector,
+            @NotNull MessageCollector messageCollector,
             @NotNull Disposable rootDisposable
     ) {
         if (arguments.freeArgs.isEmpty()) {
@@ -151,20 +151,17 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         MainCallParameters mainCallParameters = createMainCallParameters(arguments.main);
         Status<OutputFileCollection> status;
-        Consumer<Diagnostics> diagnosticsConsumer = new Consumer<Diagnostics>() {
-            @Override
-            public void consume(Diagnostics diagnostics) {
-                AnalyzerWithCompilerReport.reportDiagnostics(diagnostics, messageCollector);
-            }
-        };
 
         try {
             //noinspection unchecked
             status = translateWithMainCallParameters(mainCallParameters, sourcesFiles, outputFile, outputPrefixFile, outputPostfixFile,
-                                                    config, Consumer.EMPTY_CONSUMER, diagnosticsConsumer);
+                                                    config, Consumer.EMPTY_CONSUMER);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+        Diagnostics diagnostics = config.getTrace().getBindingContext().getDiagnostics();
+        AnalyzerWithCompilerReport.reportDiagnostics(diagnostics, messageCollector);
 
         if (status.isFail()) return ExitCode.COMPILATION_ERROR;
 

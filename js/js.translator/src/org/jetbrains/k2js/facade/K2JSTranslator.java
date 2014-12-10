@@ -38,8 +38,6 @@ import org.jetbrains.jet.analyzer.AnalysisResult;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.Diagnostics;
 import org.jetbrains.jet.utils.fileUtils.FileUtilsPackage;
 import org.jetbrains.js.compiler.JsSourceGenerationVisitor;
@@ -75,13 +73,13 @@ public final class K2JSTranslator {
             @Nullable File outputPrefixFile,
             @Nullable File outputPostfixFile,
             @NotNull Config config,
-            @NotNull Consumer<JsNode> astConsumer, // hack for tests
-            @NotNull Consumer<Diagnostics> diagnosticsConsumer
+            @NotNull Consumer<JsNode> astConsumer // hack for tests
     ) throws TranslationException, IOException {
         K2JSTranslator translator = new K2JSTranslator(config);
         TextOutputImpl output = new TextOutputImpl();
         SourceMapBuilder sourceMapBuilder = config.isSourcemap() ? new SourceMap3Builder(outputFile, output, new SourceMapBuilderConsumer()) : null;
-        Status<String> codeStatus = translator.generateProgramCode(files, mainCall, output, sourceMapBuilder, astConsumer, diagnosticsConsumer);
+        Status<String> codeStatus = translator.generateProgramCode(files, mainCall, output, sourceMapBuilder, astConsumer);
+
         if (codeStatus.isFail()) return Status.fail();
 
         String programCode = codeStatus.getResult();
@@ -138,8 +136,7 @@ public final class K2JSTranslator {
     public String generateProgramCode(@NotNull List<JetFile> files, @NotNull MainCallParameters mainCallParameters)
             throws TranslationException {
         //noinspection unchecked
-        Status<String> status = generateProgramCode(files, mainCallParameters, new TextOutputImpl(), null, Consumer.EMPTY_CONSUMER,
-                                                    Consumer.EMPTY_CONSUMER);
+        Status<String> status = generateProgramCode(files, mainCallParameters, new TextOutputImpl(), null, Consumer.EMPTY_CONSUMER);
         // TODO fix web demo reporting
         return status.getResult();
     }
@@ -150,16 +147,10 @@ public final class K2JSTranslator {
             @NotNull MainCallParameters mainCallParameters,
             @NotNull TextOutputImpl output,
             @Nullable SourceMapBuilder sourceMapBuilder,
-            @NotNull Consumer<JsNode> astConsumer,
-            @NotNull Consumer<Diagnostics> diagnosticsConsumer
+            @NotNull Consumer<JsNode> astConsumer
     ) throws TranslationException {
-
-        BindingTrace trace = new BindingTraceContext();
-        config.setTrace(trace);
         JsProgram program = generateProgram(files, mainCallParameters);
-
-        Diagnostics diagnostics = trace.getBindingContext().getDiagnostics();
-        diagnosticsConsumer.consume(diagnostics);
+        Diagnostics diagnostics = config.getTrace().getBindingContext().getDiagnostics();
 
         if (hasError(diagnostics)) return Status.fail();
 
