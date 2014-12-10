@@ -19,14 +19,16 @@ package org.jetbrains.jet.plugin.decompiler.navigation
 import org.jetbrains.jet.lang.psi.KotlinDeclarationNavigationPolicy
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetDeclaration
+import com.intellij.openapi.project.DumbService
 
 public class KotlinDeclarationNavigationPolicyImpl : KotlinDeclarationNavigationPolicy {
     override fun getNavigationElement(declaration: JetDeclaration): JetElement? {
+        if (DumbService.isDumb(declaration.getProject())) {
+            return null
+        }
         if (declaration.getContainingJetFile().isCompiled()) {
             return JetSourceNavigationHelper.replaceBySourceDeclarationIfPresent(declaration)
         }
-        else {
-            return declaration
-        }
+        return null
     }
 }
