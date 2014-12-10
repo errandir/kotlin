@@ -27,6 +27,11 @@ import org.jetbrains.jet.asJava.KotlinLightClassForPackage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jet.plugin.util.ProjectRootsUtil
+import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.roots.libraries.LibraryUtil
+import org.jetbrains.jet.utils.LibraryUtils
 
 fun PsiElement.getModuleInfo(): IdeaModuleInfo {
     fun logAndReturnDefault(message: String): IdeaModuleInfo {
@@ -84,11 +89,21 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
         when (orderEntry) {
             is LibraryOrderEntry -> {
                 val library = orderEntry.getLibrary() ?: continue @entries
-                if (ProjectRootsUtil.isLibraryClassFile(project, virtualFile) && !isDecompiledFile) {
-                    return LibraryInfo(project, library)
+                if (library.isJsLibrary()) {
+                    if (ProjectFileIndex.SERVICE.getInstance(project).isLibraryClassFile(virtualFile)) {
+                        return LibraryInfo(project, library)
+                    }
+                    else {
+                        return LibrarySourceInfo(project, library)
+                    }
                 }
-                else if (ProjectRootsUtil.isLibraryFile(project, virtualFile) || isDecompiledFile) {
-                    return LibrarySourceInfo(project, library)
+                else {
+                    if (ProjectRootsUtil.isLibraryClassFile(project, virtualFile) && !isDecompiledFile) {
+                        return LibraryInfo(project, library)
+                    }
+                    else if (ProjectRootsUtil.isLibraryFile(project, virtualFile) || isDecompiledFile) {
+                        return LibrarySourceInfo(project, library)
+                    }
                 }
             }
             is JdkOrderEntry -> {
@@ -107,4 +122,12 @@ private fun KotlinLightElement<*, *>.getModuleInfoForLightElement(): IdeaModuleI
         else -> throw IllegalStateException("Unknown light class without origin is referenced by IDE lazy resolve: $javaClass")
     }
     return element.getModuleInfo()
+}
+
+private fun Library.isJsLibrary(): Boolean {
+    val classesRoots = getFiles(OrderRootType.CLASSES)
+    return classesRoots.any {
+        val ioFile = VfsUtilCore.virtualToIoFile(it)
+        LibraryUtils.isJsRuntimeLibrary(ioFile)
+    }
 }
