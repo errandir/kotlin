@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import com.intellij.psi.PsiElement
 
 public class KotlinObjectStubImpl(
-        parent: StubElement<out PsiElement>,
+        parent: StubElement<out PsiElement>?,
         private val name: StringRef?,
         private val fqName: FqName?,
         private val superNames: Array<StringRef>,

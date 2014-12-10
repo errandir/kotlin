@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes
 import com.intellij.psi.PsiElement
 
 public class KotlinUserTypeStubImpl(
-        parent: StubElement<out PsiElement>,
+        parent: StubElement<out PsiElement>?,
         private val isAbsoluteInRootPackage: Boolean
 ) : KotlinStubBaseImpl<JetUserType>(parent, JetStubElementTypes.USER_TYPE), KotlinUserTypeStub {
     override fun isAbsoluteInRootPackage() = isAbsoluteInRootPackage

@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes
 import com.intellij.psi.PsiElement
 
 public class KotlinAnnotationEntryStubImpl(
-        parent: StubElement<out PsiElement>,
+        parent: StubElement<out PsiElement>?,
         private val shortName: StringRef,
         private val hasValueArguments: Boolean
 ) : KotlinStubBaseImpl<JetAnnotationEntry>(parent, JetStubElementTypes.ANNOTATION_ENTRY), KotlinAnnotationEntryStub {

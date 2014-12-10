@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import com.intellij.psi.PsiElement
 
 public class KotlinParameterStubImpl(
-        parent: StubElement<out PsiElement>,
+        parent: StubElement<out PsiElement>?,
         private val fqName: StringRef?,
         private val name: StringRef?,
         private val isMutable: Boolean,
