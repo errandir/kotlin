@@ -33,24 +33,29 @@ public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
     override fun getExtraArguments(moduleBuildTarget: ModuleBuildTarget, context: CompileContext): List<String> {
         val module = moduleBuildTarget.getModule()
         val pluginId = AndroidCommandLineProcessor.ANDROID_COMPILER_PLUGIN_ID
-        return listOf(
-                getPluginOptionString(pluginId, AndroidCommandLineProcessor.RESOURCE_PATH_OPTION.name, getAndroidResPath(module)),
-                getPluginOptionString(pluginId, AndroidCommandLineProcessor.MANIFEST_FILE_OPTION.name, getAndroidManifest(module))
-        )
+        val resPath = getAndroidResPath(module)
+        val manifestFile = getAndroidManifest(module)
+        return if (resPath.isNotEmpty() && manifestFile.isNotEmpty()) listOf(
+                getPluginOptionString(pluginId, AndroidCommandLineProcessor.RESOURCE_PATH_OPTION.name, resPath),
+                getPluginOptionString(pluginId, AndroidCommandLineProcessor.MANIFEST_FILE_OPTION.name, manifestFile)
+        ) else listOf()
     }
 
     override fun getClasspath(moduleBuildTarget: ModuleBuildTarget, context: CompileContext): List<String> {
         val inJar = PathUtil.getJarPathForClass(javaClass).isFile()
-        return listOf(
-            if (inJar) {
-                val libDirectory = PathUtil.getJarPathForClass(javaClass).getParentFile().getParentFile()
-                File(libDirectory, jarFileName).getAbsolutePath()
-            } else {
-                // We're in tests now (in out/production/android-jps-plugin)
-                val kotlinProjectDirectory = PathUtil.getJarPathForClass(javaClass).getParentFile().getParentFile().getParentFile()
-                File(kotlinProjectDirectory, "dist/kotlinc/lib/$jarFileName").getAbsolutePath()
-            }
-        )
+        val manifestFile = getAndroidManifest(moduleBuildTarget.getModule())
+        return if (manifestFile.isNotEmpty()) {
+            listOf(
+                    if (inJar) {
+                        val libDirectory = PathUtil.getJarPathForClass(javaClass).getParentFile().getParentFile()
+                        File(libDirectory, jarFileName).getAbsolutePath()
+                    } else {
+                        // We're in tests now (in out/production/android-jps-plugin)
+                        val kotlinProjectDirectory = PathUtil.getJarPathForClass(javaClass).getParentFile().getParentFile().getParentFile()
+                        File(kotlinProjectDirectory, "dist/kotlinc/lib/$jarFileName").getAbsolutePath()
+                    }
+            )
+        } else { listOf() }
     }
 
     private fun getAndroidResPath(module: JpsModule): String {
