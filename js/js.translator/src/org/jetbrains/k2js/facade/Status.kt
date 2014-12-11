@@ -25,15 +25,15 @@ public class Status<out T> private (private val _result: T, private val type: St
         platformStatic fun success<T>(value: T): Status<T> = Status(value, Type.Success)
     }
 
-    val result: T
+    public val result: T
         get() {
             assert(type == Type.Success) { "Getting result from fail status is illegal" }
             return _result
         }
 
-    fun isFail(): Boolean = type == Type.Fail
+    public fun isFail(): Boolean = type == Type.Fail
 
-    fun isSuccess(): Boolean = type == Type.Success
+    public fun isSuccess(): Boolean = type == Type.Success
 
     private enum class Type {
         Fail
