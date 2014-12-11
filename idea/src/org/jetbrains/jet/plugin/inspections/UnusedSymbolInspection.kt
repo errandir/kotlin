@@ -31,6 +31,9 @@ import com.intellij.util.Processor
 import org.jetbrains.jet.plugin.JetBundle
 import com.intellij.codeInspection.deadCode.UnusedDeclarationInspection
 import org.jetbrains.jet.asJava.LightClassUtil
+import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindClassUsagesHandler
+import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory
 
 
 public class UnusedSymbolInspection : AbstractKotlinInspection() {
@@ -60,6 +63,14 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                         false
                     }
                 })
+
+                // Finding text usages
+                val findClassUsagesHandler = KotlinFindClassUsagesHandler(klass, KotlinFindUsagesHandlerFactory(klass.getProject()))
+                findClassUsagesHandler.processUsagesInText(
+                        klass,
+                        { foundNonTrivialUsage = true; false },
+                        GlobalSearchScope.projectScope(klass.getProject())
+                )
 
                 if (!foundNonTrivialUsage) {
                     holder.registerProblem(
