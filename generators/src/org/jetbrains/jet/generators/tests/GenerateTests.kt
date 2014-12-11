@@ -135,7 +135,6 @@ import org.jetbrains.jet.types.AbstractJetTypeBindingTest
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentCompletionHandlerTest
 import org.jetbrains.jet.plugin.coverage.AbstractKotlinCoverageOutputFilesTest
 import org.jetbrains.k2js.test.semantics.AbstractDynamicTest
-import org.jetbrains.jet.lang.resolve.android.AbstractAndroidXml2KConversionTest
 import org.jetbrains.jet.android.AbstractParserResultEqualityTest
 import org.jetbrains.jet.android.AbstractAndroidCompletionTest
 import org.jetbrains.jet.android.AbstractAndroidGotoTest
