@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.renderer.Renderer
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters2
 
-val jsCodePositioningStrategy = markTextRangesFromDiagnostic() { (diagnostic: Diagnostic) ->
+val JS_CODE_POSITIONING_STRATEGY = markTextRangesFromDiagnostic() { (diagnostic: Diagnostic) ->
     [suppress("UNCHECKED_CAST")]
     with(diagnostic as DiagnosticWithParameters2<JetExpression, String, List<TextRange>>) {
         getB()
