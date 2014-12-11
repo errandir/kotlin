@@ -137,7 +137,6 @@ public final class K2JSTranslator {
             throws TranslationException {
         //noinspection unchecked
         Status<String> status = generateProgramCode(files, mainCallParameters, new TextOutputImpl(), null, Consumer.EMPTY_CONSUMER);
-        // TODO fix web demo reporting
         return status.getResult();
     }
 
