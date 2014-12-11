@@ -21,7 +21,7 @@ import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
 import com.google.dart.compiler.common.SourceInfoImpl;
 import com.google.gwt.dev.js.JsParser;
 import com.google.gwt.dev.js.JsParserException;
-import com.google.gwt.dev.js.UncheckedJsParserException;
+import com.google.gwt.dev.js.AbortParsingException;
 import com.google.gwt.dev.js.rhino.ErrorReporter;
 import com.google.gwt.dev.js.rhino.EvaluatorException;
 import com.intellij.openapi.util.TextRange;
@@ -165,7 +165,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
             JsScope scope = context().scope();
             StringReader reader = new StringReader((String) jsCode);
             statements.addAll(JsParser.parse(info, scope, reader, errorReporter, /* insideFunction= */ true));
-        } catch (UncheckedJsParserException e) {
+        } catch (AbortParsingException e) {
             /** @see JsCodeErrorReporter#error */
             return Collections.emptyList();
         } catch (JsParserException e) {
@@ -189,7 +189,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         public void error(String message, String sourceName, int line, String lineSource, int lineOffset) {
             ParametrizedDiagnostic<JetExpression> diagnostic = getDiagnostic(ErrorsJs.JSCODE_ERROR, message, line, lineOffset);
             context().getTrace().report(diagnostic);
-            throw new UncheckedJsParserException();
+            throw new AbortParsingException();
         }
 
         @Override

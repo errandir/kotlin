@@ -18,6 +18,6 @@ package com.google.gwt.dev.js;
 /**
  * Used only to exit parser on error
  */
-public class UncheckedJsParserException extends RuntimeException {
-  public UncheckedJsParserException() {}
+public class AbortParsingException extends RuntimeException {
+  public AbortParsingException() {}
 }
