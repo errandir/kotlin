@@ -1,5 +1,15 @@
 package kotlin
 
+public inline fun <reified T> Array(n: Int, block: (Int) -> T): Array<T> {
+    val result = arrayOfNulls<T>(n)
+
+    for (i in result.indices) {
+        result[i] = block(i)
+    }
+
+    return result as Array<T>
+}
+
 public val BooleanArray.lastIndex: Int
     get() = this.size - 1
 
