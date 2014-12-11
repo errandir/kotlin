@@ -62,11 +62,6 @@ public class AntTaskJvmTest extends AntTaskBaseTest {
     }
 
     @Test
-    public void wrongArguments() throws Exception {
-        doAntTest(FAILED);
-    }
-
-    @Test
     public void jvmClasspath() throws Exception {
         doJvmAntTest();
     }
