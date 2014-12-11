@@ -100,4 +100,9 @@ public class K2JsCliTest extends CliBaseTest {
     public void jsCodeWarning() throws Exception {
         executeCompilerCompareOutputJS();
     }
+
+    @Test
+    public void jsCodeNotLiteralError() throws Exception {
+        executeCompilerCompareOutputJS();
+    }
 }
