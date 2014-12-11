@@ -613,7 +613,6 @@
             </src>
             <compilerarg value="-Xlint:all"/>
             <classpath>
-                <fileset dir="${kotlin-home}/lib" includes="kotlin-compiler.jar"/>
                 <file file="${bootstrap.runtime}"/>
                 <fileset dir="${dependencies.dir}/ant-1.7/lib" includes="ant.jar"/>
             </classpath>
