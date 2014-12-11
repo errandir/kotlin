@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 
 import java.util.Collection;
 import java.util.List;
@@ -48,8 +49,8 @@ public abstract class Config {
 
     private final boolean sourcemap;
 
-    @Nullable
-    private BindingTrace trace = null;
+    @NotNull
+    private final BindingTrace trace = new BindingTraceContext();
 
     public Config(
             @NotNull Project project,
@@ -108,12 +109,7 @@ public abstract class Config {
 
     @NotNull
     public BindingTrace getTrace() {
-        assert trace != null: "Trace hasn't been set";
         return trace;
-    }
-
-    public void setTrace(@SuppressWarnings("NullableProblems") @NotNull BindingTrace trace) {
-        this.trace = trace;
     }
 
     @Nullable
