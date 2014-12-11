@@ -3,7 +3,7 @@ package foo
 fun testLabelledBlock() {
     var c: Int = 0
 
-    js<Unit>("""
+    js("""
         block: {
             c = 1;
             break block;
@@ -17,7 +17,7 @@ fun testLabelledBlock() {
 fun testBreakInFor() {
     var c: Int = 0
 
-    js<Unit>("""
+    js("""
         outer: for (var i = 0; i < 10; i++) {
             for (var j = 0; j < 10; j++) {
                 if (i === 1) {
@@ -35,7 +35,7 @@ fun testBreakInFor() {
 fun testContinueInFor() {
     var c: Int = 0
 
-    js<Unit>("""
+    js("""
         outer: for (var i = 0; i < 10; i++) {
             for (var j = 0; j < 10; j++) {
                 if (i >= 1) {

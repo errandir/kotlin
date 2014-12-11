@@ -1,6 +1,6 @@
 package foo
 
-fun testSwitch(number: Int): String = js<String>("""
+fun testSwitch(number: Int): String = js("""
     var result;
 
     switch(number) {

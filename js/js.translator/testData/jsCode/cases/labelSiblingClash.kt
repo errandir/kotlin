@@ -6,7 +6,7 @@ fun box(): String {
     var i = 0
     var j = 0
 
-    js<Unit>("""
+    js("""
         block: {
             i++;
             break block;

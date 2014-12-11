@@ -3,7 +3,7 @@ package foo
 fun box(): String {
     var c: Int = 0
 
-    js<Unit>("""
+    js("""
         for (var i = 1; i < 6; i++) {
             if (i % 2 === 0) {
                 continue;
