@@ -52,7 +52,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorFactory
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralArgument
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.jet.lang.psi.ValueArgument
 
 object DynamicCallableDescriptors {
 
@@ -165,36 +165,75 @@ object DynamicCallableDescriptors {
         )
     }
 
-    private fun createValueParameters(owner: DeclarationDescriptor, call: Call): List<ValueParameterDescriptor> =
-            call.getValueArguments().withIndices().map { p ->
-                val (index, arg) = p
+    private fun createValueParameters(owner: DeclarationDescriptor, call: Call): List<ValueParameterDescriptor> {
 
-                val type =
-                        when (arg) {
-                            is JetFunctionLiteralArgument -> {
-                                val funLiteral = arg.getFunctionLiteral().getFunctionLiteral()
+        fun getFunctionType(arg: JetFunctionLiteralArgument): JetType {
+            val funLiteral = arg.getFunctionLiteral().getFunctionLiteral()
 
-                                val receiverType = funLiteral.getReceiverTypeReference()?.let { DynamicType }
-                                val parameterTypes = funLiteral.getValueParameters().map { DynamicType }
+            val receiverType = funLiteral.getReceiverTypeReference()?.let { DynamicType }
+            val parameterTypes = funLiteral.getValueParameters().map { DynamicType }
 
-                                KotlinBuiltIns.getInstance().getFunctionType(Annotations.EMPTY, receiverType, parameterTypes, DynamicType)
-                            }
+            return KotlinBuiltIns.getInstance().getFunctionType(Annotations.EMPTY, receiverType, parameterTypes, DynamicType)
+        }
 
-                            else -> DynamicType
-                        }
+        val parameters = object {
+            val list = arrayListOf<ValueParameterDescriptor>()
 
-                ValueParameterDescriptorImpl(
+            private var index = 0
+
+            fun add(arg : ValueArgument, outType: JetType, varargElementType: JetType?) {
+                list.add(ValueParameterDescriptorImpl(
                         owner,
                         null,
                         index,
                         Annotations.EMPTY,
                         arg.getArgumentName()?.getReferenceExpression()?.getReferencedNameAsName() ?: Name.identifier("p$index"),
-                        type,
+                        outType,
                         false,
-                        null,
+                        varargElementType,
                         SourceElement.NO_SOURCE
-                )
+                ))
+
+                index++
             }
+        }
+
+        for (arg in call.getValueArguments()) {
+            val outType: JetType
+            val varargElementType: JetType?
+            var hasSpreadOperator = false
+
+            when {
+                arg is JetFunctionLiteralArgument -> {
+                    outType = getFunctionType(arg)
+                    varargElementType = null
+                }
+
+                arg.getSpreadElement() != null -> {
+                    hasSpreadOperator = true
+                    outType = KotlinBuiltIns.getInstance().getArrayType(DynamicType)
+                    varargElementType = DynamicType
+                }
+
+                else -> {
+                    outType = DynamicType
+                    varargElementType = null
+                }
+            }
+
+            parameters.add(arg, outType, varargElementType)
+
+            if (hasSpreadOperator) {
+                for (funLiteralArg in call.getFunctionLiteralArguments()) {
+                    parameters.add(funLiteralArg, getFunctionType(funLiteralArg), null)
+                }
+
+                break
+            }
+        }
+
+        return parameters.list
+    }
 }
 
 public fun DeclarationDescriptor.isDynamic(): Boolean {
