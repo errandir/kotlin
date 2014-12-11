@@ -174,14 +174,10 @@ object DynamicCallableDescriptors {
                             is JetFunctionLiteralArgument -> {
                                 val funLiteral = arg.getFunctionLiteral().getFunctionLiteral()
 
-                                val receiverType = funLiteral.getReceiverTypeReference()?.let { TypeUtils.DONT_CARE }
+                                val receiverType = funLiteral.getReceiverTypeReference()?.let { DynamicType }
+                                val parameterTypes = funLiteral.getValueParameters().map { DynamicType }
 
-                                val parameterTypes =
-                                        funLiteral.getValueParameters().map {
-                                            if (it.getTypeReference() == null) DynamicType else TypeUtils.DONT_CARE
-                                        }
-
-                                KotlinBuiltIns.getInstance().getFunctionType(Annotations.EMPTY, receiverType, parameterTypes, TypeUtils.DONT_CARE)
+                                KotlinBuiltIns.getInstance().getFunctionType(Annotations.EMPTY, receiverType, parameterTypes, DynamicType)
                             }
 
                             else -> DynamicType
