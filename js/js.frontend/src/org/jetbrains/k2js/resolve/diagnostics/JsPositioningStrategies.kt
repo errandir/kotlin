@@ -20,15 +20,16 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.diagnostics.Diagnostic
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1
-import org.jetbrains.jet.lang.diagnostics.PositioningStrategies.*
 import org.jetbrains.jet.lang.diagnostics.PositioningStrategy
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.renderer.Renderer
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters2
+import org.jetbrains.jet.lang.diagnostics.ParametrizedDiagnostic
 
-val JS_CODE_POSITIONING_STRATEGY = markTextRangesFromDiagnostic() { (diagnostic: Diagnostic) ->
-    [suppress("UNCHECKED_CAST")]
-    with(diagnostic as DiagnosticWithParameters2<JetExpression, String, List<TextRange>>) {
-        getB()
+public object JsCodePositioningStrategy : PositioningStrategy<PsiElement>() {
+    override fun markDiagnostic(diagnostic: ParametrizedDiagnostic<out PsiElement>): List<TextRange> {
+        [suppress("UNCHECKED_CAST")]
+        val diagnosticWithParameters = diagnostic as DiagnosticWithParameters2<JetExpression, String, List<TextRange>>
+        return diagnosticWithParameters.getB()
     }
 }
