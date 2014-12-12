@@ -53,6 +53,7 @@ import org.jetbrains.jet.lang.psi.JetFunctionLiteralArgument
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.psi.ValueArgument
+import java.util.ArrayList
 
 object DynamicCallableDescriptors {
 
@@ -176,26 +177,22 @@ object DynamicCallableDescriptors {
             return KotlinBuiltIns.getInstance().getFunctionType(Annotations.EMPTY, receiverType, parameterTypes, DynamicType)
         }
 
-        val parameters = object {
-            val list = arrayListOf<ValueParameterDescriptor>()
+        val parameters = ArrayList<ValueParameterDescriptor>()
 
-            private var index = 0
+        fun addParameter(arg : ValueArgument, outType: JetType, varargElementType: JetType?) {
+            val index = parameters.size()
 
-            fun add(arg : ValueArgument, outType: JetType, varargElementType: JetType?) {
-                list.add(ValueParameterDescriptorImpl(
-                        owner,
-                        null,
-                        index,
-                        Annotations.EMPTY,
-                        arg.getArgumentName()?.getReferenceExpression()?.getReferencedNameAsName() ?: Name.identifier("p$index"),
-                        outType,
-                        false,
-                        varargElementType,
-                        SourceElement.NO_SOURCE
-                ))
-
-                index++
-            }
+            parameters.add(ValueParameterDescriptorImpl(
+                    owner,
+                    null,
+                    index,
+                    Annotations.EMPTY,
+                    arg.getArgumentName()?.getReferenceExpression()?.getReferencedNameAsName() ?: Name.identifier("p$index"),
+                    outType,
+                    false,
+                    varargElementType,
+                    SourceElement.NO_SOURCE
+            ))
         }
 
         for (arg in call.getValueArguments()) {
@@ -221,18 +218,18 @@ object DynamicCallableDescriptors {
                 }
             }
 
-            parameters.add(arg, outType, varargElementType)
+            addParameter(arg, outType, varargElementType)
 
             if (hasSpreadOperator) {
                 for (funLiteralArg in call.getFunctionLiteralArguments()) {
-                    parameters.add(funLiteralArg, getFunctionType(funLiteralArg), null)
+                    addParameter(funLiteralArg, getFunctionType(funLiteralArg), null)
                 }
 
                 break
             }
         }
 
-        return parameters.list
+        return parameters
     }
 }
 
