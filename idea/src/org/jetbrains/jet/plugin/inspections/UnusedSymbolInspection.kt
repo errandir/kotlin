@@ -47,7 +47,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (klass.getName() == null) return
 
                 val lightClass = LightClassUtil.getPsiClass(klass)
-                if (javaInspection.isEntryPoint(lightClass)) return
+                if (lightClass != null && javaInspection.isEntryPoint(lightClass)) return
 
                 val usagesSearchHelper = KotlinClassFindUsagesOptions(holder.getProject()).toClassHelper()
                 val request = usagesSearchHelper.newRequest(UsagesSearchTarget(klass, klass.getUseScope()))
