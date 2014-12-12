@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin;
 
 import com.intellij.lang.Language;
+import org.jetbrains.annotations.NotNull;
 
 public class JetLanguage extends Language {
     public static final JetLanguage INSTANCE = new JetLanguage();
@@ -26,8 +27,14 @@ public class JetLanguage extends Language {
         super("jet");
     }
 
+    @NotNull
     @Override
     public String getDisplayName() {
         return NAME;
+    }
+
+    @Override
+    public boolean isCaseSensitive() {
+        return true; // TODO check what it affects, add test
     }
 }

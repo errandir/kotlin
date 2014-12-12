@@ -157,6 +157,7 @@ public class KotlinPsiSearchHelper(private val project: Project): PsiSearchHelpe
         return item.words.all { word ->
             val textProcessor = ResultTextProcessorImpl(item, consumer)
             processElementsWithWord(textProcessor, item.target.effectiveScope, word, UsageSearchContext.IN_CODE, true)
+//                        processElementsWithWord(textProcessor, item.target.effectiveScope, word, (UsageSearchContext.IN_CODE + UsageSearchContext.IN_PLAIN_TEXT).toShort(), true) // TODO
         }
     }
 }

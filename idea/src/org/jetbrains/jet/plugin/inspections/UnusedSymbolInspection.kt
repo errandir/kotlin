@@ -69,7 +69,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 findClassUsagesHandler.processUsagesInText(
                         klass,
                         { foundNonTrivialUsage = true; false },
-                        GlobalSearchScope.projectScope(klass.getProject())
+                        GlobalSearchScope.projectScope(klass.getProject()) // TODO is this scope correct?
                 )
 
                 if (!foundNonTrivialUsage) {
