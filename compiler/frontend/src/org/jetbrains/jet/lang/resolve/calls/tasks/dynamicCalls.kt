@@ -168,15 +168,6 @@ object DynamicCallableDescriptors {
 
     private fun createValueParameters(owner: DeclarationDescriptor, call: Call): List<ValueParameterDescriptor> {
 
-        fun getFunctionType(arg: JetFunctionLiteralArgument): JetType {
-            val funLiteral = arg.getFunctionLiteral().getFunctionLiteral()
-
-            val receiverType = funLiteral.getReceiverTypeReference()?.let { DynamicType }
-            val parameterTypes = funLiteral.getValueParameters().map { DynamicType }
-
-            return KotlinBuiltIns.getInstance().getFunctionType(Annotations.EMPTY, receiverType, parameterTypes, DynamicType)
-        }
-
         val parameters = ArrayList<ValueParameterDescriptor>()
 
         fun addParameter(arg : ValueArgument, outType: JetType, varargElementType: JetType?) {
@@ -193,6 +184,15 @@ object DynamicCallableDescriptors {
                     varargElementType,
                     SourceElement.NO_SOURCE
             ))
+        }
+
+        fun getFunctionType(arg: JetFunctionLiteralArgument): JetType {
+            val funLiteral = arg.getFunctionLiteral().getFunctionLiteral()
+
+            val receiverType = funLiteral.getReceiverTypeReference()?.let { DynamicType }
+            val parameterTypes = funLiteral.getValueParameters().map { DynamicType }
+
+            return KotlinBuiltIns.getInstance().getFunctionType(Annotations.EMPTY, receiverType, parameterTypes, DynamicType)
         }
 
         for (arg in call.getValueArguments()) {
