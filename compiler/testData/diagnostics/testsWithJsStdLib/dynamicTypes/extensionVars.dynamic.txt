@@ -1,0 +1,36 @@
+public final var onAnyVar: dynamic
+    public final fun <get-onAnyVar>(): [NULL]
+    public final fun <set-onAnyVar>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var onAnyVar: dynamic
+    public final fun <get-onAnyVar>(): [NULL]
+    public final fun <set-onAnyVar>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var onAnyVar: dynamic
+    public final fun <get-onAnyVar>(): [NULL]
+    public final fun <set-onAnyVar>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var onAnyVar: dynamic
+    public final fun <get-onAnyVar>(): [NULL]
+    public final fun <set-onAnyVar>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var onAnyVar: dynamic
+    public final fun <get-onAnyVar>(): [NULL]
+    public final fun <set-onAnyVar>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var onAnyVar: dynamic
+    public final fun <get-onAnyVar>(): [NULL]
+    public final fun <set-onAnyVar>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var onNullableAnyVar: dynamic
+    public final fun <get-onNullableAnyVar>(): [NULL]
+    public final fun <set-onNullableAnyVar>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var onStringVar: dynamic
+    public final fun <get-onStringVar>(): [NULL]
+    public final fun <set-onStringVar>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var memberVar: dynamic
+    public final fun <get-memberVar>(): [NULL]
+    public final fun <set-memberVar>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var memberExtensionVar: dynamic
+    public final fun <get-memberExtensionVar>(): [NULL]
+    public final fun <set-memberExtensionVar>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var memberVar: dynamic
+    public final fun <get-memberVar>(): [NULL]
+    public final fun <set-memberVar>(/*0*/ <set-?>: dynamic): kotlin.Unit
+public final var memberExtensionVar: dynamic
+    public final fun <get-memberExtensionVar>(): [NULL]
+    public final fun <set-memberExtensionVar>(/*0*/ <set-?>: dynamic): kotlin.Unit

@@ -33,6 +33,7 @@ import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.AsJavaPackage;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -242,7 +243,7 @@ public abstract class BaseDiagnosticsTest extends
         private final boolean declareCheckType;
         private final boolean declareFlexibleType;
         public final boolean checkLazyLog;
-        private final boolean markDynamicCalls;
+        private final List<DeclarationDescriptor> dynamicCallDescriptors;
 
         public TestFile(
                 @Nullable TestModule module,
@@ -255,7 +256,7 @@ public abstract class BaseDiagnosticsTest extends
             this.checkLazyLog = directives.containsKey(CHECK_LAZY_LOG_DIRECTIVE) || CHECK_LAZY_LOG_DEFAULT;
             this.declareCheckType = directives.containsKey(CHECK_TYPE_DIRECTIVE);
             this.declareFlexibleType = directives.containsKey(EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE);
-            this.markDynamicCalls = directives.containsKey(MARK_DYNAMIC_CALLS_DIRECTIVE);
+            this.dynamicCallDescriptors = directives.containsKey(MARK_DYNAMIC_CALLS_DIRECTIVE) ? new ArrayList<DeclarationDescriptor>() : null;
             if (fileName.endsWith(".java")) {
                 PsiFileFactory.getInstance(getProject()).createFileFromText(fileName, JavaLanguage.INSTANCE, textWithMarkers);
                 // TODO: check there's not syntax errors
@@ -325,6 +326,10 @@ public abstract class BaseDiagnosticsTest extends
             return jetFile;
         }
 
+        public List<DeclarationDescriptor> getDynamicCallDescriptors() {
+            return dynamicCallDescriptors;
+        }
+
         public boolean getActualText(BindingContext bindingContext, StringBuilder actualText, boolean skipJvmSignatureDiagnostics) {
             if (this.jetFile == null) {
                 // TODO: check java files too
@@ -338,7 +343,7 @@ public abstract class BaseDiagnosticsTest extends
 
             final boolean[] ok = { true };
             List<Diagnostic> diagnostics = ContainerUtil.filter(
-                    KotlinPackage.plus(CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, jetFile, markDynamicCalls),
+                    KotlinPackage.plus(CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, jetFile, dynamicCallDescriptors),
                                        jvmSignatureDiagnostics),
                     whatDiagnosticsToConsider
             );

@@ -61,6 +61,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.RECURSIVE;
+import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.RECURSIVE_ALL;
 
 public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
@@ -156,6 +157,33 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
         }
         if (exceptionFromLazyResolveLogValidation != null) {
             throw UtilsPackage.rethrow(exceptionFromLazyResolveLogValidation);
+        }
+
+        checkDynamicCallDescriptors(testDataFile, testFiles);
+    }
+
+    private void checkDynamicCallDescriptors(File testDataFile, List<TestFile> testFiles) {
+        File expectedFile = new File(FileUtil.getNameWithoutExtension(testDataFile.getAbsolutePath()) + ".dynamic.txt");
+        RecursiveDescriptorComparator comparator = new RecursiveDescriptorComparator(RECURSIVE_ALL);
+
+        StringBuilder actualText = new StringBuilder();
+
+        boolean containsDynamicCallsInformation = false;
+        for (TestFile testFile : testFiles) {
+            List<DeclarationDescriptor> dynamicCallDescriptors = testFile.getDynamicCallDescriptors();
+
+            if (dynamicCallDescriptors == null) continue;
+
+            containsDynamicCallsInformation = true;
+
+            for (DeclarationDescriptor descriptor : dynamicCallDescriptors) {
+                String actualSerialized = comparator.serializeRecursively(descriptor);
+                actualText.append(actualSerialized);
+            }
+        }
+
+        if (containsDynamicCallsInformation || expectedFile.exists()) {
+            JetTestUtils.assertEqualsToFile(expectedFile, actualText.toString());
         }
     }
 

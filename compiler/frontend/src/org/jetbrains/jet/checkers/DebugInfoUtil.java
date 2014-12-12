@@ -64,7 +64,7 @@ public class DebugInfoUtil {
 
         public abstract void reportUnresolvedWithTarget(@NotNull JetReferenceExpression expression, @NotNull String target);
 
-        public void reportDynamicCall(@NotNull JetElement element) { }
+        public void reportDynamicCall(@NotNull JetElement element, DeclarationDescriptor declarationDescriptor) { }
     }
 
     public static void markDebugAnnotations(
@@ -230,7 +230,7 @@ public class DebugInfoUtil {
 
     private static boolean reportIfDynamic(JetElement element, DeclarationDescriptor declarationDescriptor, DebugInfoReporter debugInfoReporter) {
         if (declarationDescriptor != null && TasksPackage.isDynamic(declarationDescriptor)) {
-            debugInfoReporter.reportDynamicCall(element);
+            debugInfoReporter.reportDynamicCall(element, declarationDescriptor);
             return true;
         }
         return false;

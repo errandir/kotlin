@@ -30,6 +30,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Severity;
@@ -87,7 +88,7 @@ public class CheckerTestUtil {
     public static List<Diagnostic> getDiagnosticsIncludingSyntaxErrors(
             @NotNull BindingContext bindingContext,
             @NotNull final PsiElement root,
-            boolean markDynamicCalls
+            List<DeclarationDescriptor> dynamicCallDescriptors
     ) {
         List<Diagnostic> diagnostics = new ArrayList<Diagnostic>();
         diagnostics.addAll(Collections2.filter(bindingContext.getDiagnostics().all(),
@@ -100,16 +101,16 @@ public class CheckerTestUtil {
         for (PsiErrorElement errorElement : AnalyzingUtils.getSyntaxErrorRanges(root)) {
             diagnostics.add(new SyntaxErrorDiagnostic(errorElement));
         }
-        List<Diagnostic> debugAnnotations = getDebugInfoDiagnostics(root, bindingContext, markDynamicCalls);
+        List<Diagnostic> debugAnnotations = getDebugInfoDiagnostics(root, bindingContext, dynamicCallDescriptors);
         diagnostics.addAll(debugAnnotations);
         return diagnostics;
     }
 
     @NotNull
-    public static List<Diagnostic> getDebugInfoDiagnostics(
+    private static List<Diagnostic> getDebugInfoDiagnostics(
             @NotNull PsiElement root,
             @NotNull BindingContext bindingContext,
-            final boolean markDynamicCalls
+            final List<DeclarationDescriptor> dynamicCallDescriptors
     ) {
         final List<Diagnostic> debugAnnotations = Lists.newArrayList();
         DebugInfoUtil.markDebugAnnotations(root, bindingContext, new DebugInfoUtil.DebugInfoReporter() {
@@ -129,8 +130,9 @@ public class CheckerTestUtil {
             }
 
             @Override
-            public void reportDynamicCall(@NotNull JetElement element) {
-                if (markDynamicCalls) {
+            public void reportDynamicCall(@NotNull JetElement element, DeclarationDescriptor declarationDescriptor) {
+                if (dynamicCallDescriptors != null) {
+                    dynamicCallDescriptors.add(declarationDescriptor);
                     newDiagnostic(element, DebugInfoDiagnosticFactory.DYNAMIC);
                 }
             }
