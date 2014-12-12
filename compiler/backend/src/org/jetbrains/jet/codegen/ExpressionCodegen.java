@@ -2272,6 +2272,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             callGenerator.putValueIfNeeded(null, Type.INT_TYPE, StackValue.constant(mask, Type.INT_TYPE));
         }
 
+        markStartLineNumber(resolvedCall.getCall().getCallElement());
         callGenerator.genCall(callableMethod, resolvedCall, !masks.isEmpty(), this);
     }
 

@@ -231,6 +231,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepIntoTest(fileName);
         }
 
+        @TestMetadata("multilineCall.kt")
+        public void testMultilineCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/stepInto/multilineCall.kt");
+            doStepIntoTest(fileName);
+        }
+
         @TestMetadata("returnVoid.kt")
         public void testReturnVoid() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/stepInto/returnVoid.kt");
