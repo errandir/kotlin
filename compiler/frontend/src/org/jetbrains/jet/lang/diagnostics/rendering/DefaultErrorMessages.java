@@ -17,6 +17,8 @@
 package org.jetbrains.jet.lang.diagnostics.rendering;
 
 import com.google.common.collect.ImmutableList;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.extensions.Extensions;
 import kotlin.Function1;
@@ -54,9 +56,49 @@ public class DefaultErrorMessages {
     }
 
     private static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();
-    public static final List<DiagnosticFactoryToRendererMap> MAPS = ImmutableList.<DiagnosticFactoryToRendererMap>builder()
-                    .addAll(
-                            KotlinPackage.map(
+    private static List<DiagnosticFactoryToRendererMap> MAPS = null;
+    private static Application APP = null;
+    private static DispatchingDiagnosticRenderer RENDERER = null;
+
+    @NotNull
+    public static String render(@NotNull Diagnostic diagnostic) {
+        return getRenderer().render(diagnostic);
+    }
+
+    @NotNull
+    public static List<DiagnosticFactoryToRendererMap> getMaps() {
+        resetMapsIfNeeded();
+        return MAPS;
+    }
+
+    @NotNull
+    private static DiagnosticRenderer<Diagnostic> getRenderer() {
+        boolean mapsChanged = resetMapsIfNeeded();
+
+        if (RENDERER == null || mapsChanged) {
+            RENDERER = new DispatchingDiagnosticRenderer(MAPS);
+        }
+
+        return RENDERER;
+    }
+
+    private static boolean needToResetMaps() {
+        Application newApp = ApplicationManager.getApplication();
+
+        if (APP != newApp) {
+            APP = newApp;
+            return true;
+        }
+
+        return MAPS == null;
+    }
+
+    private static boolean resetMapsIfNeeded() {
+        if (!needToResetMaps()) return false;
+
+        MAPS = ImmutableList.<DiagnosticFactoryToRendererMap>builder()
+                .addAll(
+                        KotlinPackage.map(
                                 Extensions.getExtensions(Extension.EP_NAME),
                                 new Function1<Extension, DiagnosticFactoryToRendererMap>() {
                                     @Override
@@ -64,15 +106,15 @@ public class DefaultErrorMessages {
                                         return extension.getMap();
                                     }
                                 }
-                            )
-                    )
-                    .add(MAP)
-                    .build();
+                        )
+                )
+                .add(MAP)
+                .build();
 
-    public static final DiagnosticRenderer<Diagnostic> RENDERER = new DispatchingDiagnosticRenderer(MAPS);
+        return true;
+    }
 
     static {
-
         MAP.put(UNRESOLVED_REFERENCE, "Unresolved reference: {0}", ELEMENT_TEXT);
 
         MAP.put(INVISIBLE_REFERENCE, "Cannot access ''{0}'': it is ''{1}'' in ''{2}''", NAME, TO_STRING, NAME);
@@ -567,6 +609,8 @@ public class DefaultErrorMessages {
                 }
             }
         }
+
+        resetMapsIfNeeded();
     }
 
     private DefaultErrorMessages() {

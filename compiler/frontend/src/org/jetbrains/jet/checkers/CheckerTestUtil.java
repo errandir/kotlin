@@ -629,7 +629,7 @@ public class CheckerTestUtil {
 
         @Nullable
         private static DiagnosticRenderer getRenderer(@NotNull Diagnostic diagnostic) {
-            for (DiagnosticFactoryToRendererMap map : DefaultErrorMessages.MAPS) {
+            for (DiagnosticFactoryToRendererMap map : DefaultErrorMessages.getMaps()) {
                 DiagnosticRenderer renderer = map.get(diagnostic.getFactory());
                 if (renderer != null)
                     return renderer;

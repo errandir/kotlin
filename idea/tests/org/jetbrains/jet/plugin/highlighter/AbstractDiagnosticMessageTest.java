@@ -100,11 +100,11 @@ public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
             String readableDiagnosticText;
             String extension;
             if (messageType != MessageType.TEXT && IdeErrorMessages.MAP.get(diagnostic.getFactory()) != null) {
-                readableDiagnosticText = formatHtml(IdeErrorMessages.RENDERER.render(diagnostic));
+                readableDiagnosticText = formatHtml(IdeErrorMessages.render(diagnostic));
                 extension = MessageType.HTML.extension;
             }
             else {
-                readableDiagnosticText = DefaultErrorMessages.RENDERER.render(diagnostic);
+                readableDiagnosticText = DefaultErrorMessages.render(diagnostic);
                 extension = MessageType.TEXT.extension;
             }
             String errorMessageFileName = name + index;
