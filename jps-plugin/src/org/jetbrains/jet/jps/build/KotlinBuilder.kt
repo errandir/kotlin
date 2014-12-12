@@ -40,7 +40,6 @@ import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
 import java.io.File
-import java.io.IOException
 import java.lang.reflect.Modifier
 import java.util.*
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION
@@ -61,6 +60,10 @@ import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jet.compiler.runner.OutputItemsCollector
 import org.jetbrains.jet.compiler.runner.SimpleOutputItem
 import org.jetbrains.jet.utils.LibraryUtils
+import org.jetbrains.jps.android.AndroidJpsUtil
+import org.jetbrains.jps.android.model.JpsAndroidModuleExtension
+import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
+import org.jetbrains.jps.model.module.JpsModule
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     class object {
@@ -123,6 +126,25 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             compileToJs(chunk, commonArguments, environment, messageCollector, project)
         }
         else {
+            val representativeTarget = chunk.representativeTarget()
+
+            fun concatenate(strings: Array<String>?, cp: List<String>) = array(*(strings ?: array<String>()), *cp.copyToArray())
+
+            for (argumentProvider in ServiceLoader.load(javaClass<KotlinJpsCompilerArgumentsProvider>())) {
+                // appending to pluginOptions
+                commonArguments.pluginOptions = concatenate(commonArguments.pluginOptions,
+                                                            argumentProvider.getExtraArguments(representativeTarget, context))
+                // appending to classpath
+                commonArguments.pluginClasspaths = concatenate(commonArguments.pluginClasspaths,
+                                                               argumentProvider.getClasspath(representativeTarget, context))
+
+                messageCollector.report(
+                        INFO,
+                        "Plugin loaded: ${argumentProvider.javaClass.getSimpleName()}",
+                        NO_LOCATION
+                )
+            }
+
             compileToJvm(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder, environment, filesToCompile, messageCollector)
         }
 
