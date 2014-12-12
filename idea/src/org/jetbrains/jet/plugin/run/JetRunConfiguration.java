@@ -35,16 +35,18 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiMethod;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
+import org.jetbrains.jet.asJava.KotlinLightMethod;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.MainFunctionDetector;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionFqnNameIndex;
 
 import java.util.*;
 
@@ -237,15 +239,14 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
             PsiClass psiClass = JavaExecutionUtil.findMainClass(module, runClass);
             if (psiClass == null) throw CantRunException.classNotFound(runClass, module);
 
-            FqName packageFqName = new FqName(runClass).parent();
-            JetNamedFunction mainFun = findMainFun(module, packageFqName);
-            if (mainFun == null) throw new CantRunException(String.format("Top-level function 'main' not found in package '%s'", packageFqName));
+            JetNamedFunction mainFun = findMainFun(psiClass);
+            if (mainFun == null) throw new CantRunException(noFunctionFoundMessage(psiClass));
 
             Module classModule = ModuleUtilCore.findModuleForPsiElement(mainFun);
             if (classModule == null) classModule = module;
 
             VirtualFile virtualFileForMainFun = mainFun.getContainingFile().getVirtualFile();
-            if (virtualFileForMainFun == null) throw new CantRunException(String.format("Top-level function 'main' not found in package '%s'", packageFqName));
+            if (virtualFileForMainFun == null) throw new CantRunException(noFunctionFoundMessage(psiClass));
 
             ModuleFileIndex fileIndex = ModuleRootManager.getInstance(classModule).getFileIndex();
             if (fileIndex.isInSourceContent(virtualFileForMainFun)) {
@@ -265,17 +266,28 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
             return JavaParameters.JDK_AND_CLASSES;
         }
 
+        @NotNull
+        private String noFunctionFoundMessage(@NotNull PsiClass psiClass) {
+            //noinspection ConstantConditions
+            FqName classFqName = new FqName(psiClass.getQualifiedName());
+            if (psiClass instanceof KotlinLightClassForExplicitDeclaration) {
+                return String.format("Function 'main' not found in class '%s'", classFqName);
+            }
+            return String.format("Top-level function 'main' not found in package '%s'", classFqName.parent());
+        }
+
         @Nullable
-        private JetNamedFunction findMainFun(@NotNull Module module, @NotNull FqName packageFqName) throws CantRunException {
-            String mainFunFqName = packageFqName.child(Name.identifier("main")).asString();
-            Collection<JetNamedFunction> mainFunctions = JetTopLevelFunctionFqnNameIndex.getInstance().get(
-                    mainFunFqName, module.getProject(), module.getModuleRuntimeScope(true));
-            for (JetNamedFunction function : mainFunctions) {
+        private JetNamedFunction findMainFun(@NotNull PsiClass psiClass) throws CantRunException {
+            for (PsiMethod method : psiClass.findMethodsByName("main", false)) {
+                if (!(method instanceof KotlinLightMethod)) continue;
+
+                JetDeclaration declaration = ((KotlinLightMethod) method).getOrigin();
+                if (!(declaration instanceof JetNamedFunction)) continue;
+
+                JetNamedFunction function = (JetNamedFunction) declaration;
                 BindingContext bindingContext = ResolvePackage.analyze(function);
                 MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(bindingContext);
-                if (mainFunctionDetector.isMain(function)) {
-                    return function;
-                }
+                if (mainFunctionDetector.isMain(function)) return function;
             }
             return null;
         }

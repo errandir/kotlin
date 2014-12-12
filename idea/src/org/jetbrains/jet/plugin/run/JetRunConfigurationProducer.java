@@ -26,12 +26,12 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.NotNullFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.MainFunctionDetector;
@@ -58,12 +58,13 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
 
     @Override
     protected RunnerAndConfigurationSettings createConfigurationByElement(@NotNull Location location, ConfigurationContext configurationContext) {
-        JetFile file = getStartClassFile(location);
-        if (file == null) return null;
+        JetDeclarationContainer container = getEntryPointContainer(location);
+        if (container == null) return null;
 
-        mySourceElement = file;
+        mySourceElement = (PsiElement) container;
 
-        FqName startClassFQName = PackageClassUtils.getPackageClassFqName(file.getPackageFqName());
+        FqName startClassFQName = getStartClassFqName(container);
+        if (startClassFQName == null) return null;
 
         Module module = location.getModule();
         assert module != null;
@@ -72,7 +73,21 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
     }
 
     @Nullable
-    private static JetFile getStartClassFile(@NotNull Location location) {
+    private static FqName getStartClassFqName(@Nullable JetDeclarationContainer container) {
+        if (container == null) return null;
+        if (container instanceof JetFile) return PackageClassUtils.getPackageClassFqName(((JetFile) container).getPackageFqName());
+        if (container instanceof JetClassOrObject) {
+            JetClassOrObject classOrObject = (JetClassOrObject) container;
+            if (classOrObject instanceof JetObjectDeclaration && ((JetObjectDeclaration) classOrObject).isClassObject()) {
+                classOrObject = PsiTreeUtil.getParentOfType(classOrObject, JetClass.class);
+            }
+            return classOrObject != null ? classOrObject.getFqName() : null;
+        }
+        throw new IllegalArgumentException("Invalid entry-point container: " + ((PsiElement) container).getText());
+    }
+
+    @Nullable
+    private static JetDeclarationContainer getEntryPointContainer(@NotNull Location location) {
         if (DumbService.getInstance(location.getProject()).isDumb()) return null;
 
         Module module = location.getModule();
@@ -80,7 +95,16 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
 
         if (ProjectStructureUtil.isJsKotlinModule(module)) return null;
 
-        PsiFile psiFile = location.getPsiElement().getContainingFile();
+        //noinspection unchecked
+        JetDeclarationContainer entryPointContainer = PsiTreeUtil.getParentOfType(location.getPsiElement(),
+                                                                                  JetClassOrObject.class, JetFile.class);
+        if (entryPointContainer instanceof JetClass) {
+            JetClassObject classObject = ((JetClass) entryPointContainer).getClassObject();
+            entryPointContainer = classObject != null ? classObject.getObjectDeclaration() : null;
+        }
+        if (entryPointContainer == null) return null;
+
+        PsiFile psiFile = ((PsiElement) entryPointContainer).getContainingFile();
         if (!(psiFile instanceof JetFile && ProjectRootsUtil.isInProjectOrLibSource(psiFile))) return null;
 
         JetFile jetFile = (JetFile) psiFile;
@@ -94,7 +118,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
                     }
                 });
 
-        return mainFunctionDetector.hasMain(jetFile.getDeclarations()) ? jetFile : null;
+        return mainFunctionDetector.hasMain(entryPointContainer.getDeclarations()) ? entryPointContainer: null;
     }
 
     @NotNull
@@ -117,10 +141,8 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
             @NotNull List<RunnerAndConfigurationSettings> existingConfigurations,
             ConfigurationContext context
     ) {
-        JetFile file = getStartClassFile(location);
-        if (file == null) return null;
-
-        FqName startClassFQName = PackageClassUtils.getPackageClassFqName(file.getPackageFqName());
+        FqName startClassFQName = getStartClassFqName(getEntryPointContainer(location));
+        if (startClassFQName == null) return null;
 
         for (RunnerAndConfigurationSettings existingConfiguration : existingConfigurations) {
             if (existingConfiguration.getType() instanceof JetRunConfigurationType) {

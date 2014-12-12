@@ -40,6 +40,8 @@ import com.intellij.openapi.roots.ModuleRootModificationUtil
 import org.jetbrains.jet.plugin.search.allScope
 import org.jetbrains.jet.plugin.util.application.runWriteAction
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionFqnNameIndex
+import org.jetbrains.jet.plugin.stubindex.JetTopLevelClassByPackageIndex
+import org.jetbrains.jet.lang.resolve.name.FqName
 
 class RunConfigurationTest: CodeInsightTestCase() {
     fun getTestProject() = myProject!!
@@ -77,6 +79,13 @@ class RunConfigurationTest: CodeInsightTestCase() {
         Assert.assertTrue(javaParameters.getClassPath().getRootDirs().contains(moduleWithDependencySrcDir))
     }
 
+    fun testClassesAndObjects() {
+        configureModule(moduleDirPath("module"), getTestProject().getBaseDir()!!)
+        Assert.assertTrue(createConfigurationFromClass("q.Foo") != null);
+        Assert.assertTrue(createConfigurationFromClass("q.Bar") != null);
+        Assert.assertTrue(createConfigurationFromClass("q.Baz") == null);
+    }
+
     private fun createConfigurationFromMain(mainFqn: String): JetRunConfiguration {
         val mainFunction = JetTopLevelFunctionFqnNameIndex.getInstance().get(mainFqn, getTestProject(), getTestProject().allScope()).first()
 
@@ -84,6 +93,19 @@ class RunConfigurationTest: CodeInsightTestCase() {
         dataContext.put(Location.DATA_KEY, PsiLocation(getTestProject(), mainFunction))
 
         return ConfigurationContext.getFromContext(dataContext)!!.getConfiguration()!!.getConfiguration() as JetRunConfiguration
+    }
+
+    private fun createConfigurationFromClass(classFqn: String): JetRunConfiguration? {
+        val mainClass = JetTopLevelClassByPackageIndex.getInstance().get(
+                FqName(classFqn).parent().asString(),
+                getTestProject(),
+                getTestProject().allScope()
+        ).first()
+
+        val dataContext = MapDataContext()
+        dataContext.put(Location.DATA_KEY, PsiLocation(getTestProject(), mainClass))
+
+        return ConfigurationContext.getFromContext(dataContext)!!.getConfiguration()!!.getConfiguration() as? JetRunConfiguration
     }
 
     private fun configureModule(moduleDir: String, outputParentDir: VirtualFile, configModule: Module = getModule()): CreateModuleResult {
