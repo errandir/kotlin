@@ -83,7 +83,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     protected ExitCode doExecute(
             @NotNull K2JSCompilerArguments arguments,
             @NotNull Services services,
-            @NotNull MessageCollector messageCollector,
+            @NotNull final MessageCollector messageCollector,
             @NotNull Disposable rootDisposable
     ) {
         if (arguments.freeArgs.isEmpty()) {
